@@ -6,1321 +6,1604 @@
 <title>AYAR — Gold Retail Management</title>
 <style>
 :root{
-  --velvet:#16302A;
-  --velvet-deep:#0D1F1A;
-  --velvet-line:#27473F;
-  --paper:#F3F6F3;
-  --card:#FFFFFF;
-  --gold:#C9A227;
-  --gold-lit:#E8C868;
-  --oxblood:#8A2F27;
-  --oxblood-soft:#F6E9E7;
-  --slate:#4C5D58;
-  --slate-soft:#8C9B96;
-  --rule:#DCE4E0;
-  --ok:#2E6E4E;
-  --ok-soft:#E7F1EB;
-
+  --velvet:#16302A; --velvet-deep:#0D1F1A; --velvet-line:#27473F;
+  --paper:#F3F6F3; --card:#FFFFFF;
+  --gold:#C9A227; --gold-lit:#E8C868; --gold-pale:#FBF4DE;
+  --oxblood:#8A2F27; --oxblood-soft:#F6E9E7;
+  --slate:#4C5D58; --slate-soft:#8C9B96; --rule:#DCE4E0;
+  --ok:#2E6E4E; --ok-soft:#E7F1EB;
   --serif:Georgia,'Iowan Old Style','Times New Roman',serif;
   --sans:ui-sans-serif,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   --arabic:'Noto Kufi Arabic','Segoe UI',Tahoma,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{
-  background:var(--paper);
-  color:#1B2622;
-  font-family:var(--sans);
-  font-size:14px;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-}
+body{background:var(--paper);color:#1B2622;font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:var(--arabic)}
-.num{font-variant-numeric:tabular-nums;letter-spacing:-0.01em}
+.num,.mono{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 button{font:inherit;cursor:pointer}
-input,select{font:inherit}
+input,select,textarea{font:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
-/* ---------- shell ---------- */
-.shell{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
-body[dir="rtl"] .shell{grid-template-columns:1fr 216px}
+/* ---- login ---- */
+.gate{min-height:100vh;display:grid;place-items:center;background:var(--velvet);padding:20px}
+.gate .box{background:#fff;width:100%;max-width:392px;border-top:3px solid var(--gold)}
+.gate .top{padding:26px 28px 20px;text-align:center;border-bottom:1px solid var(--rule)}
+.gate h1{font-family:var(--serif);font-size:34px;margin:0;color:var(--velvet);letter-spacing:.2em;font-weight:400}
+body[dir="rtl"] .gate h1{font-family:var(--arabic);letter-spacing:0}
+.gate .top p{margin:5px 0 0;font-size:12px;color:var(--slate-soft)}
+.gate .who{padding:8px 0}
+.gate .who button{display:flex;width:100%;gap:11px;align-items:center;background:none;border:0;border-bottom:1px solid #EDF1EE;padding:12px 26px;text-align:start}
+.gate .who button:last-child{border-bottom:0}
+.gate .who button:hover{background:var(--gold-pale)}
+.gate .av{width:32px;height:32px;border-radius:50%;background:var(--velvet);color:var(--gold-lit);display:grid;place-items:center;font-size:12.5px;flex:none}
+.gate .nm{font-weight:600;font-size:13.5px}
+.gate .rl{font-size:11.5px;color:var(--slate-soft)}
+.gate .ft{padding:13px 26px;border-top:1px solid var(--rule);display:flex;gap:7px}
+.gate .ft button{flex:1;background:transparent;border:1px solid var(--rule);color:var(--slate);padding:5px 0;font-size:12px}
+.gate .ft button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#211A00;font-weight:600}
+
+/* ---- shell ---- */
+.shell{display:grid;grid-template-columns:214px 1fr;min-height:100vh}
+body[dir="rtl"] .shell{grid-template-columns:1fr 214px}
 body[dir="rtl"] .rail{order:2}
-
 .rail{background:var(--velvet);color:#D6E2DD;display:flex;flex-direction:column}
-.brand{padding:22px 20px 18px;border-bottom:1px solid var(--velvet-line)}
-.brand h1{
-  font-family:var(--serif);font-size:27px;margin:0;color:var(--gold-lit);
-  letter-spacing:.18em;font-weight:400;
-}
+.brand{padding:20px 20px 15px;border-bottom:1px solid var(--velvet-line)}
+.brand h1{font-family:var(--serif);font-size:25px;margin:0;color:var(--gold-lit);letter-spacing:.18em;font-weight:400}
 body[dir="rtl"] .brand h1{font-family:var(--arabic);letter-spacing:0}
-.brand p{margin:4px 0 0;font-size:11.5px;color:#7E948D;line-height:1.35}
-
-.nav{padding:10px 0;flex:1}
-.nav button{
-  display:flex;align-items:baseline;gap:9px;width:100%;
-  background:none;border:0;color:#B9CBC5;text-align:inherit;
-  padding:9px 20px;font-size:13.5px;border-inline-start:3px solid transparent;
-}
+.brand p{margin:3px 0 0;font-size:11px;color:#7E948D;line-height:1.35}
+.nav{padding:8px 0;flex:1;overflow-y:auto}
+.nav button{display:flex;align-items:baseline;gap:8px;width:100%;background:none;border:0;color:#B9CBC5;text-align:inherit;padding:8px 20px;font-size:13px;border-inline-start:3px solid transparent}
 .nav button:hover{background:#1D3A33;color:#EAF2EF}
-.nav button[aria-current="true"]{
-  background:var(--velvet-deep);color:#fff;border-inline-start-color:var(--gold);
-}
+.nav button[aria-current="true"]{background:var(--velvet-deep);color:#fff;border-inline-start-color:var(--gold)}
 .nav .tally{margin-inline-start:auto;font-size:11px;color:var(--gold-lit);font-variant-numeric:tabular-nums}
 .nav .tally.warn{color:#E9A19A}
-
-.railfoot{padding:14px 20px 18px;border-top:1px solid var(--velvet-line);font-size:11.5px;color:#7E948D}
-.langs{display:flex;gap:6px;margin-bottom:10px}
-.langs button{
-  flex:1;background:transparent;border:1px solid var(--velvet-line);color:#B9CBC5;
-  padding:5px 0;font-size:12px;border-radius:2px;
-}
+.nav .sep{padding:11px 20px 4px;font-size:10.5px;color:#5E7770;letter-spacing:.06em}
+.railfoot{padding:12px 20px 15px;border-top:1px solid var(--velvet-line);font-size:11px;color:#7E948D}
+.me{display:flex;gap:9px;align-items:center;margin-bottom:10px}
+.me .av{width:28px;height:28px;border-radius:50%;background:var(--velvet-deep);color:var(--gold-lit);display:grid;place-items:center;font-size:11px;flex:none}
+.me .nm{color:#DCE7E3;font-size:12.5px;font-weight:600;line-height:1.2}
+.me .rl{font-size:10.5px;color:#7E948D}
+.langs{display:flex;gap:5px;margin-bottom:9px}
+.langs button{flex:1;background:transparent;border:1px solid var(--velvet-line);color:#B9CBC5;padding:4px 0;font-size:11.5px}
 .langs button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#211A00;font-weight:600}
-
+.railfoot .out{width:100%;background:none;border:0;color:#7E948D;text-align:start;padding:0;font-size:11.5px;text-decoration:underline}
 .main{display:flex;flex-direction:column;min-width:0}
 
-/* ---------- rate board (persistent) ---------- */
-.board{
-  background:var(--velvet-deep);color:#E6EFEC;
-  padding:11px 26px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;
-  border-bottom:2px solid var(--gold);
-}
-.board .stamp{font-family:var(--serif);font-size:12.5px;color:#8FA6A0;line-height:1.25;min-width:104px}
+/* ---- rate board ---- */
+.board{background:var(--velvet-deep);color:#E6EFEC;padding:10px 24px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;border-bottom:2px solid var(--gold)}
+.board .stamp{font-family:var(--serif);font-size:12px;color:#8FA6A0;line-height:1.25;min-width:100px}
 body[dir="rtl"] .board .stamp{font-family:var(--arabic)}
-.board .stamp b{display:block;color:var(--gold-lit);font-size:13px;font-weight:400}
-.karats{display:flex;gap:22px;flex-wrap:wrap}
-.karat{min-width:88px}
-.karat .k{font-size:11.5px;color:#8FA6A0}
-.karat .sell{font-size:21px;color:var(--gold-lit);font-variant-numeric:tabular-nums;line-height:1.15}
-.karat .buy{font-size:11.5px;color:#9FB5AE;font-variant-numeric:tabular-nums}
+.board .stamp b{display:block;color:var(--gold-lit);font-size:12.5px;font-weight:400}
+.karats{display:flex;gap:20px;flex-wrap:wrap}
+.karat{min-width:84px}
+.karat .k{font-size:11px;color:#8FA6A0}
+.karat .sell{font-size:20px;color:var(--gold-lit);font-variant-numeric:tabular-nums;line-height:1.15}
+.karat .buy{font-size:11px;color:#9FB5AE;font-variant-numeric:tabular-nums}
 .karat.flash .sell{animation:tick .9s ease-out}
 @keyframes tick{0%{color:#fff;text-shadow:0 0 14px rgba(232,200,104,.9)}100%{color:var(--gold-lit)}}
 .board .act{margin-inline-start:auto;display:flex;gap:8px;align-items:center}
-.board .act button{
-  background:transparent;border:1px solid var(--velvet-line);color:#CBDAD5;
-  padding:6px 12px;border-radius:2px;font-size:12.5px;
-}
+.board .act button{background:transparent;border:1px solid var(--velvet-line);color:#CBDAD5;padding:5px 11px;font-size:12px}
 .board .act button:hover{border-color:var(--gold);color:var(--gold-lit)}
+.board .act button:disabled{opacity:.4;cursor:not-allowed}
 
-/* ---------- content ---------- */
-.view{padding:24px 26px 60px;max-width:1180px}
-.vhead{margin-bottom:18px}
-.vhead h2{font-family:var(--serif);font-weight:400;font-size:25px;margin:0 0 3px}
+/* ---- content ---- */
+.view{padding:22px 24px 60px;max-width:1200px}
+.vhead{margin-bottom:16px}
+.vhead h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 3px}
 body[dir="rtl"] .vhead h2{font-family:var(--arabic)}
-.vhead p{margin:0;color:var(--slate);max-width:66ch;font-size:13.5px}
-
-.panel{background:var(--card);border:1px solid var(--rule);margin-bottom:18px}
-.panel > h3{
-  font-size:13px;font-weight:600;margin:0;padding:11px 16px;
-  border-bottom:1px solid var(--rule);color:var(--slate);
-  display:flex;align-items:center;gap:10px;
-}
-.panel > h3 .side{margin-inline-start:auto;font-weight:400;color:var(--slate-soft);font-size:12px}
-.pbody{padding:16px}
-
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr}}
-
+.vhead p{margin:0;color:var(--slate);max-width:68ch;font-size:13.5px}
+.panel{background:var(--card);border:1px solid var(--rule);margin-bottom:16px}
+.panel>h3{font-size:12.5px;font-weight:600;margin:0;padding:10px 15px;border-bottom:1px solid var(--rule);color:var(--slate);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.panel>h3 .side{margin-inline-start:auto;font-weight:400;color:var(--slate-soft);font-size:11.5px;display:flex;gap:7px;align-items:center}
+.pbody{padding:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1040px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 table{width:100%;border-collapse:collapse}
-th{
-  text-align:start;font-size:11.5px;font-weight:600;color:var(--slate-soft);
-  padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap;
-}
-td{padding:9px 10px;border-bottom:1px solid #EDF1EE;vertical-align:top}
+th{text-align:start;font-size:11px;font-weight:600;color:var(--slate-soft);padding:8px 9px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:8px 9px;border-bottom:1px solid #EDF1EE;vertical-align:top}
 tbody tr:last-child td{border-bottom:0}
+tbody tr.clickable:hover{background:var(--gold-pale);cursor:pointer}
 .r{text-align:end;font-variant-numeric:tabular-nums}
-.mono{font-variant-numeric:tabular-nums}
-.dim{color:var(--slate-soft)}
-.tiny{font-size:11.5px}
-
-.pill{display:inline-block;padding:1px 7px;border-radius:2px;font-size:11px;border:1px solid}
-.pill.gold{background:#FBF4DE;border-color:#E3D094;color:#7A5F09}
+.dim{color:var(--slate-soft)} .tiny{font-size:11.5px}
+.pill{display:inline-block;padding:1px 7px;font-size:11px;border:1px solid}
+.pill.gold{background:var(--gold-pale);border-color:#E3D094;color:#7A5F09}
 .pill.green{background:var(--ok-soft);border-color:#B9D8C6;color:var(--ok)}
 .pill.red{background:var(--oxblood-soft);border-color:#E2BEB9;color:var(--oxblood)}
 .pill.grey{background:#EEF2F0;border-color:var(--rule);color:var(--slate)}
-
 .metric{padding:2px 0}
 .metric .lab{font-size:11.5px;color:var(--slate-soft)}
-.metric .val{font-family:var(--serif);font-size:27px;font-variant-numeric:tabular-nums;line-height:1.2}
+.metric .val{font-family:var(--serif);font-size:26px;font-variant-numeric:tabular-nums;line-height:1.2}
 body[dir="rtl"] .metric .val{font-family:var(--arabic)}
 .metric .sub{font-size:11.5px;color:var(--slate)}
 .metric .val.pos{color:var(--ok)} .metric .val.neg{color:var(--oxblood)}
-
-.btn{background:var(--velvet);color:#fff;border:1px solid var(--velvet);padding:8px 15px;border-radius:2px;font-size:13px}
+.btn{background:var(--velvet);color:#fff;border:1px solid var(--velvet);padding:7px 14px;font-size:13px}
 .btn:hover{background:#1E3F37}
 .btn.ghost{background:transparent;color:var(--velvet);border-color:var(--rule)}
 .btn.ghost:hover{background:#EEF2F0}
 .btn.gold{background:var(--gold);border-color:var(--gold);color:#1F1800;font-weight:600}
 .btn.gold:hover{background:#D9B02C}
+.btn.danger{background:var(--oxblood);border-color:var(--oxblood);color:#fff}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-.btn.sm{padding:4px 10px;font-size:12px}
-
-label.f{display:block;margin-bottom:11px}
+.btn.sm{padding:3px 9px;font-size:12px}
+label.f{display:block;margin-bottom:10px}
 label.f span{display:block;font-size:11.5px;color:var(--slate);margin-bottom:3px}
-label.f input,label.f select{
-  width:100%;padding:7px 9px;border:1px solid var(--rule);border-radius:2px;background:#fff;
-}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-.note{border-inline-start:3px solid var(--gold);background:#FCF8EA;padding:10px 14px;font-size:12.5px;color:#5C4B10}
+label.f input,label.f select,label.f textarea{width:100%;padding:7px 9px;border:1px solid var(--rule);background:#fff}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.note{border-inline-start:3px solid var(--gold);background:#FCF8EA;padding:9px 13px;font-size:12.5px;color:#5C4B10}
 .note.red{border-inline-start-color:var(--oxblood);background:var(--oxblood-soft);color:#6B241D}
 .note.green{border-inline-start-color:var(--ok);background:var(--ok-soft);color:#1F5238}
-
-/* formula receipt */
 .formula{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--slate);line-height:1.75}
 .formula b{color:#1B2622;font-weight:600}
-
-/* AML meter */
-.meter{height:9px;background:#E7ECE9;border-radius:1px;overflow:hidden;margin:7px 0 5px}
+.meter{height:8px;background:#E7ECE9;overflow:hidden;margin:6px 0 4px}
 .meter i{display:block;height:100%;background:var(--ok);transition:width .35s ease,background .35s ease}
-.meter i.near{background:var(--gold)}
-.meter i.over{background:var(--oxblood)}
-
-.stack{display:flex;flex-direction:column;gap:9px}
+.meter i.near{background:var(--gold)} .meter i.over{background:var(--oxblood)}
+.stack{display:flex;flex-direction:column;gap:8px}
 .rowline{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #EDF1EE}
 .rowline:last-child{border-bottom:0}
 .rowline .grow{flex:1;min-width:0}
-
-.modal{position:fixed;inset:0;background:rgba(13,31,26,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
-.modal .box{background:#fff;max-width:460px;width:100%;border-top:3px solid var(--gold);max-height:88vh;overflow:auto}
-.modal h3{margin:0;padding:15px 18px;border-bottom:1px solid var(--rule);font-size:15px;font-family:var(--serif);font-weight:400}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);margin-bottom:14px}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 15px;font-size:13px;color:var(--slate)}
+.tabs button[aria-selected="true"]{border-bottom-color:var(--gold);color:#1B2622;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(13,31,26,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal .box{background:#fff;max-width:470px;width:100%;border-top:3px solid var(--gold);max-height:90vh;overflow:auto}
+.modal .box.wide{max-width:720px}
+.modal h3{margin:0;padding:14px 17px;border-bottom:1px solid var(--rule);font-size:15px;font-family:var(--serif);font-weight:400}
 body[dir="rtl"] .modal h3{font-family:var(--arabic)}
-.modal .mb{padding:16px 18px}
-.modal .mf{padding:12px 18px;border-top:1px solid var(--rule);display:flex;gap:8px;justify-content:flex-end}
-
-.toast{
-  position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(-50%);
-  background:var(--velvet-deep);color:#EAF2EF;padding:11px 18px;border-radius:2px;
-  border-inline-start:3px solid var(--gold);font-size:13px;z-index:60;max-width:520px;
-}
+.modal .mb{padding:15px 17px} .modal .mf{padding:11px 17px;border-top:1px solid var(--rule);display:flex;gap:7px;justify-content:flex-end}
+.toast{position:fixed;bottom:20px;inset-inline-start:50%;transform:translateX(-50%);background:var(--velvet-deep);color:#EAF2EF;padding:10px 17px;border-inline-start:3px solid var(--gold);font-size:13px;z-index:60;max-width:540px}
 body[dir="rtl"] .toast{transform:translateX(50%)}
+.toast.bad{border-inline-start-color:var(--oxblood)}
+
+/* ---- printable invoice ---- */
+.inv{background:#fff;color:#121A17;padding:26px 30px;font-size:12.5px}
+.inv .ih{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--velvet);padding-bottom:12px;margin-bottom:14px;gap:18px}
+.inv .ih h1{font-family:var(--serif);font-size:30px;margin:0;color:var(--velvet);letter-spacing:.18em;font-weight:400}
+body[dir="rtl"] .inv .ih h1{font-family:var(--arabic);letter-spacing:0}
+.inv .ih .co{font-size:11px;color:var(--slate);line-height:1.5}
+.inv .ih .rt{text-align:end;font-size:11.5px;line-height:1.6}
+.inv .ih .rt b{font-size:14px}
+.inv .meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;font-size:11.5px}
+.inv .meta div span{color:var(--slate-soft)}
+.inv table{margin-bottom:12px}
+.inv th{font-size:10.5px;border-bottom:1px solid var(--velvet)}
+.inv td{border-bottom:1px solid #E9EEEB;font-size:11.5px}
+.inv .tot{margin-inline-start:auto;width:290px;font-size:12px}
+.inv .tot .l{display:flex;justify-content:space-between;padding:3px 0}
+.inv .tot .l.big{border-top:2px solid var(--velvet);margin-top:5px;padding-top:7px;font-size:15px;font-weight:600}
+.inv .decl{margin-top:16px;border-top:1px solid var(--rule);padding-top:10px;font-size:10.5px;color:var(--slate);line-height:1.6}
+.inv .sig{display:flex;justify-content:space-between;margin-top:26px;font-size:11px;color:var(--slate-soft)}
+.inv .sig div{border-top:1px solid var(--rule);padding-top:5px;width:170px;text-align:center}
+@media print{
+  body{background:#fff}
+  .rail,.board,.vhead,.tabs,.modal .mf,.noprint{display:none!important}
+  .modal{position:static;background:none;padding:0;display:block}
+  .modal .box,.modal .box.wide{max-width:none;border:0;box-shadow:none;max-height:none;overflow:visible}
+  .modal h3{display:none}
+  .modal .mb{padding:0}
+  .shell{display:block}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-@media(max-width:820px){
-  .shell{grid-template-columns:1fr}
-  body[dir="rtl"] .shell{grid-template-columns:1fr}
+@media(max-width:860px){
+  .shell,body[dir="rtl"] .shell{grid-template-columns:1fr}
   .rail{order:0}
   .nav{display:flex;overflow-x:auto;padding:0}
   .nav button{white-space:nowrap;border-inline-start:0;border-bottom:3px solid transparent}
   .nav button[aria-current="true"]{border-inline-start:0;border-bottom-color:var(--gold)}
-  .nav .tally{display:none}
-  .railfoot{display:none}
-  .view{padding:18px 14px 50px}
+  .nav .tally,.nav .sep,.railfoot{display:none}
+  .view{padding:16px 12px 50px}
 }
 </style>
 </head>
 <body>
-<div class="shell">
-  <aside class="rail">
-    <div class="brand">
-      <h1 id="brandName">AYAR</h1>
-      <p id="brandSub">Gold retail management<br>State of Qatar</p>
-    </div>
-    <nav class="nav" id="nav"></nav>
-    <div class="railfoot">
-      <div class="langs">
-        <button id="langEn" onclick="setLang('en')" aria-pressed="true">English</button>
-        <button id="langAr" onclick="setLang('ar')" aria-pressed="false">العربية</button>
-      </div>
-      <div id="railNote">Demonstration data</div>
-    </div>
-  </aside>
-
-  <div class="main">
-    <div class="board" id="board"></div>
-    <div class="view" id="view"></div>
-  </div>
-</div>
+<div id="app"></div>
 <div id="modalHost"></div>
 <div id="toastHost"></div>
 
 <script>
 "use strict";
+/* =====================================================================
+   AYAR — gold retail management for a multi-branch chain in Qatar
+   Single-file prototype. All figures are illustrative demonstration data.
+   ===================================================================== */
 
-/* =========================================================================
-   AYAR — prototype for a multi-branch gold retail chain in Qatar
-   All figures are illustrative demonstration data.
-   ========================================================================= */
+const PURITY = {24:1.000, 22:0.916, 21:0.875, 18:0.750};
+const AML_CASH_THRESHOLD = 50000;   // QAR — DPMS trigger, Law No. 20 of 2019
+const RETENTION_YEARS = 10;
+const TODAY = "2026-08-31";
 
-const KARAT_PURITY = { 24:1.000, 22:0.916, 21:0.875, 18:0.750 };
-const AML_CASH_THRESHOLD = 50000;      // QAR — DPMS trigger, Law No. 20 of 2019
-const STRUCTURING_WINDOW_DAYS = 30;
+function round2(n){ return Math.round(n*100)/100 }
+function round3(n){ return Math.round(n*1000)/1000 }
 
-const T = {
-  en:{
-    dir:"ltr", brand:"AYAR", brandSub:"Gold retail management<br>State of Qatar",
-    demoData:"Demonstration data",
-    nav:{board:"Board",counter:"Counter",stock:"Stock",metal:"Metal position",compliance:"Compliance"},
-    boardTitle:"Rate board", asOf:"Set at", spot:"Spot",
-    sell:"Sell", buy:"Buy back", perGram:"per gram",
-    reviseRate:"Revise rate", branch:"Branch", allBranches:"All branches",
-
-    v_board_h:"Today across the chain",
-    v_board_p:"One rate board, four branches. Rates set here apply everywhere the moment they are published, and every open quote keeps the rate it was locked at.",
-    todaySales:"Sales today", pieces:"pieces", oldGoldIn:"Old gold taken in",
-    makingMargin:"Making charge margin", metalMargin:"Metal position gain",
-    makingSub:"Earned on workmanship — steady", metalSub:"Unrealised on stock held — moves with the rate",
-    branchToday:"Branch performance today", counterStaff:"Counter",
-    invoices:"Invoices", turnover:"Turnover", exchanged:"Exchanged in",
-    openAlerts:"Needs attention",
-
-    v_counter_h:"Sales counter",
-    v_counter_p:"Every line is priced from weight, not from a price tag. The customer sees exactly how the number was built.",
-    customer:"Customer", selectCustomer:"Select customer", walkIn:"Walk-in customer",
-    addItem:"Add a piece", tag:"Tag", item:"Item", karat:"Karat",
-    grossWt:"Gross", stoneWt:"Stone", netWt:"Net", fineWt:"Fine",
-    making:"Making", stones:"Stones", rate:"Rate", amount:"Amount",
-    goldValue:"Gold value", perPiece:"per piece", pctOfGold:"% of gold value",
-    noLines:"No pieces on this bill yet. Add one from stock to see the pricing break down.",
-    oldGold:"Old gold exchange",
-    oldGoldHelp:"Weigh, test, and assess the customer's old gold. It is credited against this bill and enters scrap stock.",
-    addOldGold:"Take in old gold", deduction:"Deduction", credit:"Credit",
-    assessedAt:"Assessed at", noOldGold:"Nothing taken in on this bill.",
-    subtotal:"Gold and making", lessOldGold:"Less old gold credit", netPayable:"Net payable",
-    tender:"Payment", cash:"Cash", card:"Card", transfer:"Bank transfer",
-    complete:"Complete sale", clearBill:"Clear bill",
-    rateLocked:"Rate locked", rateMoved:"Rate moved since this bill opened",
-    amlGate:"Customer due diligence required",
-    amlGateBody:"The cash portion of this sale is at or above QAR 50,000. Dealers in precious metals are designated non-financial businesses at this threshold, so identification must be recorded before the sale can be completed.",
-    idType:"Identification", qid:"Qatari ID", passport:"Passport", cr:"Commercial registration",
-    idNumber:"Number", fullName:"Name as on document", expiry:"Expiry",
-    recordAndContinue:"Record and complete", cancel:"Cancel",
-    cashSoFar:"Cash on this sale", ofThreshold:"of the QAR 50,000 threshold",
-    saleDone:"Sale recorded", saleDoneAml:"Sale recorded with due diligence on file",
-
-    v_stock_h:"Tagged stock",
-    v_stock_p:"Each piece carries its own tag, weight and karat. Stock is counted two ways at once — by piece and by weight — because a count that reconciles one and not the other has not reconciled.",
-    filterKarat:"Karat", allKarats:"All karats", search:"Search tag or item",
-    transfer:"Transfer", transferTo:"Transfer to branch", moveStock:"Move piece",
-    pieceCount:"Pieces", totalNet:"Net weight", totalFine:"Fine weight", stockValue:"Value at today's rate",
-    transferred:"Piece transferred",
-    onHand:"In stock", sold:"Sold", scrapPill:"Scrap",
-
-    v_metal_h:"Metal position",
-    v_metal_p:"A gold shop keeps two ledgers. The riyal ledger is ordinary accounting. This is the other one — everything owed and owned in fine gold grams, because that is the unit the supplier settles in.",
-    ownedStock:"Owned stock", consigned:"On consignment", scrapHeld:"Scrap held",
-    supplierOwed:"Owed to suppliers", netPosition:"Net metal position",
-    fineGrams:"fine g", longPos:"Long — exposed to a falling rate", shortPos:"Short — exposed to a rising rate",
-    byBranch:"By branch", consolidated:"Consolidated",
-    valueAt:"Valued at today's 24K rate",
-    metalExplain:"Net position is owned stock plus scrap, less what is owed to suppliers on unfixed purchases. Consigned metal belongs to the supplier and is excluded.",
-
-    v_comp_h:"Compliance register",
-    v_comp_p:"Dealers in precious metals or stones are supervised by the Ministry of Commerce and Industry under Law No. 20 of 2019. Due diligence, monitoring and reporting are built into the sale, not filed afterwards.",
-    cddRecords:"Due diligence on file", alerts:"Monitoring alerts", retention:"Records retained",
-    retentionSub:"Ten years, above the five-year statutory minimum",
-    alertStructuring:"Repeated payments just under the threshold",
-    alertStructuringBody:"Three cash sales below QAR 50,000 within 30 days, none individually triggering due diligence.",
-    alertPep:"Politically exposed person match",
-    alertPepBody:"Screening returned a possible match on a family member of a listed official. Enhanced due diligence required before any further sale.",
-    alertHighValue:"High value cash sale",
-    alertHighValueBody:"Cash portion above the threshold. Identification recorded at the counter.",
-    review:"Review", escalate:"Escalate to MLRO", escalated:"Escalated to the money laundering reporting officer",
-    open:"Open", cleared:"Cleared", date:"Date", customerCol:"Customer", amountCol:"Amount", statusCol:"Status",
-    recordedBy:"Recorded by", idOnFile:"Identification on file",
-
-    modalRate_h:"Publish new rates",
-    modalRate_p:"Rates apply to all four branches at once. Bills already open keep the rate they locked.",
-    spotPrice:"Spot price (USD per ounce)", fx:"USD to QAR", spread:"Buy-back spread",
-    publish:"Publish to all branches", ratesPublished:"New rates published to all branches",
-    computed:"Computed per-gram rates",
-
-    modalOld_h:"Take in old gold",
-    testMethod:"Test method", touchstone:"Touchstone", xrf:"XRF analyser", declared:"Customer declared",
-    assessedKarat:"Assessed karat", weightIn:"Weight",
-    modalAdd_h:"Add a piece to the bill",
-    noStock:"No pieces match this filter.",
-  },
-  ar:{
-    dir:"rtl", brand:"عِيار", brandSub:"إدارة تجارة الذهب<br>دولة قطر",
-    demoData:"بيانات تجريبية",
-    nav:{board:"اللوحة",counter:"نقطة البيع",stock:"المخزون",metal:"مركز المعدن",compliance:"الامتثال"},
-    boardTitle:"لوحة الأسعار", asOf:"حُدِّد في", spot:"السعر العالمي",
-    sell:"بيع", buy:"شراء", perGram:"للجرام",
-    reviseRate:"تعديل السعر", branch:"الفرع", allBranches:"جميع الفروع",
-
-    v_board_h:"اليوم على مستوى الفروع",
-    v_board_p:"لوحة أسعار واحدة وأربعة فروع. السعر المعتمد هنا يسري في كل فرع فور نشره، وكل فاتورة مفتوحة تحتفظ بالسعر المثبَّت عليها.",
-    todaySales:"مبيعات اليوم", pieces:"قطعة", oldGoldIn:"الذهب المستبدل",
-    makingMargin:"هامش أجرة الصنعة", metalMargin:"ربح مركز المعدن",
-    makingSub:"عائد الصنعة — ثابت", metalSub:"غير محقق على المخزون — يتحرك مع السعر",
-    branchToday:"أداء الفروع اليوم", counterStaff:"البائع",
-    invoices:"الفواتير", turnover:"المبيعات", exchanged:"المستبدل",
-    openAlerts:"يحتاج متابعة",
-
-    v_counter_h:"نقطة البيع",
-    v_counter_p:"كل سطر يُسعَّر بالوزن لا ببطاقة سعر. والعميل يرى كيف تكوَّن المبلغ بالضبط.",
-    customer:"العميل", selectCustomer:"اختر العميل", walkIn:"عميل عابر",
-    addItem:"إضافة قطعة", tag:"الرقم", item:"الصنف", karat:"العيار",
-    grossWt:"القائم", stoneWt:"الأحجار", netWt:"الصافي", fineWt:"الخالص",
-    making:"الصنعة", stones:"الأحجار", rate:"السعر", amount:"المبلغ",
-    goldValue:"قيمة الذهب", perPiece:"للقطعة", pctOfGold:"% من قيمة الذهب",
-    noLines:"لا توجد قطع على هذه الفاتورة. أضف قطعة من المخزون لترى تفصيل التسعير.",
-    oldGold:"استبدال الذهب القديم",
-    oldGoldHelp:"وزن الذهب القديم وفحصه وتقدير عياره. يُخصم من هذه الفاتورة ويدخل مخزون الكسر.",
-    addOldGold:"استلام ذهب قديم", deduction:"الخصم", credit:"القيمة",
-    assessedAt:"قُدِّر بسعر", noOldGold:"لم يُستلم ذهب قديم على هذه الفاتورة.",
-    subtotal:"الذهب والصنعة", lessOldGold:"ناقص قيمة الذهب القديم", netPayable:"صافي المستحق",
-    tender:"السداد", cash:"نقداً", card:"بطاقة", transfer:"تحويل بنكي",
-    complete:"إتمام البيع", clearBill:"إلغاء الفاتورة",
-    rateLocked:"السعر مثبَّت", rateMoved:"تغيَّر السعر بعد فتح الفاتورة",
-    amlGate:"مطلوب العناية الواجبة تجاه العميل",
-    amlGateBody:"الجزء النقدي من هذه العملية يبلغ 50,000 ريال أو يتجاوزها. تُعدُّ محال المعادن الثمينة من الأعمال غير المالية المحددة عند هذا الحد، لذا يلزم تسجيل الهوية قبل إتمام البيع.",
-    idType:"نوع الهوية", qid:"البطاقة القطرية", passport:"جواز السفر", cr:"السجل التجاري",
-    idNumber:"الرقم", fullName:"الاسم كما في الوثيقة", expiry:"تاريخ الانتهاء",
-    recordAndContinue:"تسجيل وإتمام", cancel:"إلغاء",
-    cashSoFar:"النقد في هذه العملية", ofThreshold:"من حد الـ 50,000 ريال",
-    saleDone:"تم تسجيل البيع", saleDoneAml:"تم تسجيل البيع مع حفظ العناية الواجبة",
-
-    v_stock_h:"المخزون المُرقَّم",
-    v_stock_p:"لكل قطعة رقمها ووزنها وعيارها. ويُجرد المخزون بطريقتين معاً — بالعدد وبالوزن — لأن الجرد الذي يطابق أحدهما دون الآخر ليس جرداً.",
-    filterKarat:"العيار", allKarats:"كل العيارات", search:"ابحث برقم القطعة أو الصنف",
-    transfer:"تحويل", transferTo:"تحويل إلى فرع", moveStock:"نقل القطعة",
-    pieceCount:"عدد القطع", totalNet:"الوزن الصافي", totalFine:"الوزن الخالص", stockValue:"القيمة بسعر اليوم",
-    transferred:"تم نقل القطعة",
-    onHand:"في المخزون", sold:"مُباع", scrapPill:"كسر",
-
-    v_metal_h:"مركز المعدن",
-    v_metal_p:"محل الذهب يمسك دفترين. دفتر الريال محاسبة عادية، وهذا هو الدفتر الآخر — كل ما يُملك ويُستحق محسوباً بجرامات الذهب الخالص، لأنها الوحدة التي يُسوَّى بها مع المورد.",
-    ownedStock:"مخزون مملوك", consigned:"أمانة لدى المحل", scrapHeld:"كسر لدى المحل",
-    supplierOwed:"مستحق للموردين", netPosition:"صافي مركز المعدن",
-    fineGrams:"جم خالص", longPos:"مركز طويل — معرَّض لانخفاض السعر", shortPos:"مركز قصير — معرَّض لارتفاع السعر",
-    byBranch:"حسب الفرع", consolidated:"الإجمالي",
-    valueAt:"مُقوَّم بسعر عيار 24 اليوم",
-    metalExplain:"صافي المركز هو المخزون المملوك زائد الكسر، ناقص المستحق للموردين على المشتريات غير المثبَّتة. المعدن الأمانة ملك للمورد ولا يدخل الحساب.",
-
-    v_comp_h:"سجل الامتثال",
-    v_comp_p:"تخضع محال المعادن والأحجار الثمينة لإشراف وزارة التجارة والصناعة بموجب القانون رقم 20 لسنة 2019. العناية الواجبة والمراقبة والإبلاغ مدمجة في عملية البيع لا تُستكمل بعدها.",
-    cddRecords:"سجلات العناية الواجبة", alerts:"تنبيهات المراقبة", retention:"مدة حفظ السجلات",
-    retentionSub:"عشر سنوات، فوق الحد النظامي وهو خمس سنوات",
-    alertStructuring:"مدفوعات متكررة أقل من الحد بقليل",
-    alertStructuringBody:"ثلاث عمليات نقدية دون 50,000 ريال خلال 30 يوماً، ولم تستوجب أيٌّ منها منفردة العناية الواجبة.",
-    alertPep:"تطابق مع شخص سياسي ممثَّل للمخاطر",
-    alertPepBody:"أظهر الفحص تطابقاً محتملاً مع أحد أقارب مسؤول مدرج. تلزم العناية الواجبة المشددة قبل أي بيع لاحق.",
-    alertHighValue:"بيع نقدي مرتفع القيمة",
-    alertHighValueBody:"الجزء النقدي يتجاوز الحد. سُجِّلت الهوية عند نقطة البيع.",
-    review:"مراجعة", escalate:"إحالة لمسؤول الإبلاغ", escalated:"أُحيلت إلى مسؤول الإبلاغ عن غسل الأموال",
-    open:"مفتوح", cleared:"مُغلق", date:"التاريخ", customerCol:"العميل", amountCol:"المبلغ", statusCol:"الحالة",
-    recordedBy:"سجَّلها", idOnFile:"الهوية محفوظة",
-
-    modalRate_h:"نشر أسعار جديدة",
-    modalRate_p:"تسري الأسعار على الفروع الأربعة معاً. والفواتير المفتوحة تحتفظ بالسعر المثبَّت عليها.",
-    spotPrice:"السعر العالمي (دولار للأونصة)", fx:"الدولار مقابل الريال", spread:"فرق سعر الشراء",
-    publish:"نشر على جميع الفروع", ratesPublished:"نُشرت الأسعار الجديدة على جميع الفروع",
-    computed:"الأسعار المحسوبة للجرام",
-
-    modalOld_h:"استلام ذهب قديم",
-    testMethod:"طريقة الفحص", touchstone:"محك", xrf:"جهاز XRF", declared:"إفادة العميل",
-    assessedKarat:"العيار المقدَّر", weightIn:"الوزن",
-    modalAdd_h:"إضافة قطعة إلى الفاتورة",
-    noStock:"لا توجد قطع مطابقة.",
-  }
+/* ---------------- roles ---------------- */
+const ROLES = {
+  owner:   {rank:3, maxDiscountPct:100, canRate:true,  canApprove:true,  canVoid:true,  branchLock:false},
+  manager: {rank:2, maxDiscountPct:15,  canRate:true,  canApprove:true,  canVoid:true,  branchLock:true},
+  sales:   {rank:1, maxDiscountPct:5,   canRate:false, canApprove:false, canVoid:false, branchLock:true},
 };
-
-/* ---------------- seed data ---------------- */
-const BRANCHES = [
-  {id:"sw", en:"Souq Waqif",  ar:"سوق واقف"},
-  {id:"vl", en:"Villaggio",   ar:"فيلاجيو"},
-  {id:"lm", en:"Landmark",    ar:"لاند مارك"},
-  {id:"kh", en:"Al Khor",     ar:"الخور"},
+const USERS = [
+  {id:"u1", en:"Khalid Al-Emadi",  ar:"خالد العمادي",  role:"owner",   branch:"sw", init:"KE"},
+  {id:"u2", en:"Hessa Nasser",     ar:"حصة ناصر",      role:"manager", branch:"sw", init:"HN"},
+  {id:"u3", en:"Abdul Rahman",     ar:"عبد الرحمن",     role:"sales",   branch:"vl", init:"AR"},
 ];
 
+/* ---------------- masters ---------------- */
+const BRANCHES = [
+  {id:"sw", en:"Souq Waqif", ar:"سوق واقف", code:"SW", cr:"CR 84102"},
+  {id:"vl", en:"Villaggio",  ar:"فيلاجيو",  code:"VL", cr:"CR 84103"},
+  {id:"lm", en:"Landmark",   ar:"لاند مارك", code:"LM", cr:"CR 84104"},
+  {id:"kh", en:"Al Khor",    ar:"الخور",    code:"KH", cr:"CR 84105"},
+];
 const CUSTOMERS = [
-  {id:"c1", en:"Fatima Al-Muraikhi", ar:"فاطمة المريخي", id_on_file:true},
-  {id:"c2", en:"Rajesh Kumar",       ar:"راجيش كومار",   id_on_file:true},
-  {id:"c3", en:"Noora Al-Sulaiti",   ar:"نورة السليطي",  id_on_file:false},
-  {id:"c4", en:"Marwan Haddad",      ar:"مروان حداد",    id_on_file:false},
+  {id:"c1", en:"Fatima Al-Muraikhi", ar:"فاطمة المريخي", phone:"+974 5544 1120", idOnFile:true},
+  {id:"c2", en:"Rajesh Kumar",       ar:"راجيش كومار",   phone:"+974 3327 8891", idOnFile:true},
+  {id:"c3", en:"Noora Al-Sulaiti",   ar:"نورة السليطي",  phone:"+974 6612 4407", idOnFile:false},
+  {id:"c4", en:"Marwan Haddad",      ar:"مروان حداد",    phone:"+974 7781 3350", idOnFile:false},
+];
+const SUPPLIERS = [
+  {id:"s1", en:"Emirates Gold DMCC", ar:"إمارات جولد"},
+  {id:"s2", en:"Al Etihad Refinery", ar:"مصفاة الاتحاد"},
+  {id:"s3", en:"Damas Wholesale",    ar:"داماس للجملة"},
+];
+const KARIGARS = [
+  {id:"k1", en:"Suresh Workshop",  ar:"ورشة سوريش",  tol:2.0},
+  {id:"k2", en:"Anwar Goldsmith",  ar:"أنور الصائغ",  tol:1.5},
 ];
 
 let STOCK = [
-  {tag:"AY-22-04412", en:"Bangle set, plain",     ar:"طقم أساور سادة",      k:22, gross:48.220, stone:0,     branch:"sw", mk:"g",  mkv:18, stoneVal:0,    status:"in"},
-  {tag:"AY-22-04418", en:"Necklace, filigree",    ar:"عقد مشغول",           k:22, gross:36.540, stone:0,     branch:"sw", mk:"g",  mkv:26, stoneVal:0,    status:"in"},
-  {tag:"AY-21-01180", en:"Bridal set",            ar:"طقم عروس",            k:21, gross:92.310, stone:2.140, branch:"sw", mk:"g",  mkv:22, stoneVal:4800, status:"in"},
-  {tag:"AY-18-00733", en:"Ring, solitaire",       ar:"خاتم سوليتير",        k:18, gross:6.180,  stone:0.960, branch:"sw", mk:"p",  mkv:950, stoneVal:18500,status:"in"},
-  {tag:"AY-22-04455", en:"Chain, Cuban link",     ar:"سلسلة كوبية",         k:22, gross:22.870, stone:0,     branch:"vl", mk:"g",  mkv:20, stoneVal:0,    status:"in"},
-  {tag:"AY-21-01204", en:"Earrings, drop",        ar:"حلق متدلٍّ",           k:21, gross:11.430, stone:0.320, branch:"vl", mk:"pct",mkv:12, stoneVal:2100, status:"in"},
-  {tag:"AY-24-00091", en:"Bar, 50 g",             ar:"سبيكة 50 جم",         k:24, gross:50.000, stone:0,     branch:"vl", mk:"p",  mkv:120,stoneVal:0,    status:"in"},
-  {tag:"AY-22-04470", en:"Bracelet, mesh",        ar:"إسورة شبكية",         k:22, gross:19.660, stone:0,     branch:"lm", mk:"g",  mkv:24, stoneVal:0,    status:"in"},
-  {tag:"AY-18-00751", en:"Pendant, diamond",      ar:"دلاية ألماس",         k:18, gross:8.900,  stone:1.480, branch:"lm", mk:"p",  mkv:1400,stoneVal:26400,status:"in"},
-  {tag:"AY-21-01221", en:"Bangle, engraved",      ar:"أسورة منقوشة",        k:21, gross:27.050, stone:0,     branch:"lm", mk:"g",  mkv:19, stoneVal:0,    status:"in"},
-  {tag:"AY-22-04491", en:"Anklet pair",           ar:"زوج خلاخيل",          k:22, gross:31.780, stone:0,     branch:"kh", mk:"g",  mkv:16, stoneVal:0,    status:"in"},
-  {tag:"AY-24-00104", en:"Coin, 1 oz",            ar:"عملة أونصة",          k:24, gross:31.103, stone:0,     branch:"kh", mk:"p",  mkv:90, stoneVal:0,    status:"in"},
-  {tag:"AY-21-01235", en:"Ring, wedding band",    ar:"محبس زواج",           k:21, gross:5.420,  stone:0,     branch:"kh", mk:"p",  mkv:280,stoneVal:0,    status:"in"},
-  {tag:"AY-22-04502", en:"Choker, traditional",   ar:"مخنقة تراثية",        k:22, gross:64.190, stone:0,     branch:"sw", mk:"g",  mkv:28, stoneVal:0,    status:"in"},
+  {tag:"AY-22-04412", en:"Bangle set, plain",   ar:"طقم أساور سادة",  k:22, gross:48.220, stone:0,     branch:"sw", mk:"g",  mkv:18,   stoneVal:0,     status:"in"},
+  {tag:"AY-22-04418", en:"Necklace, filigree",  ar:"عقد مشغول",       k:22, gross:36.540, stone:0,     branch:"sw", mk:"g",  mkv:26,   stoneVal:0,     status:"in"},
+  {tag:"AY-21-01180", en:"Bridal set",          ar:"طقم عروس",        k:21, gross:92.310, stone:2.140, branch:"sw", mk:"g",  mkv:22,   stoneVal:4800,  status:"in"},
+  {tag:"AY-18-00733", en:"Ring, solitaire",     ar:"خاتم سوليتير",    k:18, gross:6.180,  stone:0.960, branch:"sw", mk:"p",  mkv:950,  stoneVal:18500, status:"in"},
+  {tag:"AY-22-04502", en:"Choker, traditional", ar:"مخنقة تراثية",    k:22, gross:64.190, stone:0,     branch:"sw", mk:"g",  mkv:28,   stoneVal:0,     status:"in"},
+  {tag:"AY-22-04455", en:"Chain, Cuban link",   ar:"سلسلة كوبية",     k:22, gross:22.870, stone:0,     branch:"vl", mk:"g",  mkv:20,   stoneVal:0,     status:"in"},
+  {tag:"AY-21-01204", en:"Earrings, drop",      ar:"حلق متدلٍّ",       k:21, gross:11.430, stone:0.320, branch:"vl", mk:"pct",mkv:12,   stoneVal:2100,  status:"in"},
+  {tag:"AY-24-00091", en:"Bar, 50 g",           ar:"سبيكة 50 جم",     k:24, gross:50.000, stone:0,     branch:"vl", mk:"p",  mkv:120,  stoneVal:0,     status:"in"},
+  {tag:"AY-22-04470", en:"Bracelet, mesh",      ar:"إسورة شبكية",     k:22, gross:19.660, stone:0,     branch:"lm", mk:"g",  mkv:24,   stoneVal:0,     status:"in"},
+  {tag:"AY-18-00751", en:"Pendant, diamond",    ar:"دلاية ألماس",     k:18, gross:8.900,  stone:1.480, branch:"lm", mk:"p",  mkv:1400, stoneVal:26400, status:"in"},
+  {tag:"AY-21-01221", en:"Bangle, engraved",    ar:"أسورة منقوشة",    k:21, gross:27.050, stone:0,     branch:"lm", mk:"g",  mkv:19,   stoneVal:0,     status:"in"},
+  {tag:"AY-22-04491", en:"Anklet pair",         ar:"زوج خلاخيل",      k:22, gross:31.780, stone:0,     branch:"kh", mk:"g",  mkv:16,   stoneVal:0,     status:"in"},
+  {tag:"AY-24-00104", en:"Coin, 1 oz",          ar:"عملة أونصة",      k:24, gross:31.103, stone:0,     branch:"kh", mk:"p",  mkv:90,   stoneVal:0,     status:"in"},
+  {tag:"AY-21-01235", en:"Ring, wedding band",  ar:"محبس زواج",       k:21, gross:5.420,  stone:0,     branch:"kh", mk:"p",  mkv:280,  stoneVal:0,     status:"in"},
 ];
 
 const BRANCH_DAY = {
-  sw:{inv:14, turnover:412600, pieces:19, oldGold:186.420},
-  vl:{inv:9,  turnover:268300, pieces:11, oldGold: 74.110},
-  lm:{inv:11, turnover:331900, pieces:14, oldGold:102.360},
-  kh:{inv:6,  turnover:147200, pieces: 8, oldGold: 55.980},
+  sw:{inv:14, turnover:412600, pieces:19, oldGold:186.420, cashExpected:168400},
+  vl:{inv:9,  turnover:268300, pieces:11, oldGold: 74.110, cashExpected: 96200},
+  lm:{inv:11, turnover:331900, pieces:14, oldGold:102.360, cashExpected:141750},
+  kh:{inv:6,  turnover:147200, pieces: 8, oldGold: 55.980, cashExpected: 58900},
+};
+let METAL = {
+  sw:{owned:1284.610, consigned:420.000, scrap:186.420, owed:640.000, atKarigar:0},
+  vl:{owned: 806.330, consigned:180.000, scrap: 74.110, owed:310.000, atKarigar:0},
+  lm:{owned: 941.780, consigned:260.000, scrap:102.360, owed:455.000, atKarigar:0},
+  kh:{owned: 512.940, consigned: 90.000, scrap: 55.980, owed:180.000, atKarigar:0},
 };
 
-const METAL = {
-  sw:{owned:1284.610, consigned:420.000, scrap:186.420, owed:640.000},
-  vl:{owned: 806.330, consigned:180.000, scrap: 74.110, owed:310.000},
-  lm:{owned: 941.780, consigned:260.000, scrap:102.360, owed:455.000},
-  kh:{owned: 512.940, consigned: 90.000, scrap: 55.980, owed:180.000},
-};
+let SALES = [
+  {no:"SW-26-01187", date:"2026-08-31", branch:"sw", cust:"c1", by:"u2", gold:52840.20, making:3910.00, stones:4800, oldGold:8412.60, net:53137.60, cash:53137.60, card:0, transfer:0, cdd:true, lines:[{tag:"AY-21-01180"}], void:false},
+  {no:"SW-26-01186", date:"2026-08-31", branch:"sw", cust:"c3", by:"u2", gold:14152.30, making:  944.00, stones:0,    oldGold:0,       net:15096.30, cash:6000, card:9096.30, transfer:0, cdd:false, lines:[{tag:"AY-22-04418"}], void:false},
+  {no:"VL-26-00902", date:"2026-08-31", branch:"vl", cust:"c2", by:"u3", gold: 8854.10, making:  457.40, stones:0,    oldGold:2260.00, net: 7051.50, cash:0, card:7051.50, transfer:0, cdd:false, lines:[{tag:"AY-22-04455"}], void:false},
+  {no:"LM-26-00744", date:"2026-08-30", branch:"lm", cust:"c4", by:"u2", gold:41200.00, making: 2180.00, stones:0,    oldGold:0,       net:43380.00, cash:43380.00, card:0, transfer:0, cdd:false, lines:[], void:false},
+];
+
+let JOBS = [
+  {id:"J-0411", karigar:"k1", branch:"sw", issued:184.500, k:22, expected:180.810, tol:2.0, received:0,       status:"out",  desc_en:"Bangles, 12 pcs", desc_ar:"أساور 12 قطعة", date:"2026-08-24"},
+  {id:"J-0409", karigar:"k2", branch:"sw", issued: 96.200, k:21, expected: 94.756, tol:1.5, received:94.110,  status:"done", desc_en:"Chain repair batch", desc_ar:"دفعة إصلاح سلاسل", date:"2026-08-19"},
+  {id:"J-0412", karigar:"k1", branch:"vl", issued:212.000, k:22, expected:207.760, tol:2.0, received:0,       status:"out",  desc_en:"Necklace order", desc_ar:"طلب عقود", date:"2026-08-28"},
+  {id:"J-0405", karigar:"k2", branch:"sw", issued:141.300, k:22, expected:139.181, tol:1.5, received:140.180, status:"done", desc_en:"Bracelet batch", desc_ar:"دفعة إسورة", date:"2026-08-14"},
+];
+
+let PURCHASES = [
+  {id:"P-2261", sup:"s1", branch:"sw", date:"2026-08-26", fine:640.000, k:24, mode:"unfixed", rate:0,      amount:0,       status:"open"},
+  {id:"P-2258", sup:"s3", branch:"lm", date:"2026-08-22", fine:455.000, k:22, mode:"unfixed", rate:0,      amount:0,       status:"open"},
+  {id:"P-2254", sup:"s2", branch:"vl", date:"2026-08-18", fine:310.000, k:24, mode:"fixed",   rate:418.90, amount:129859,  status:"settled"},
+];
 
 let ALERTS = [
   {id:"a1", type:"structuring", cust:"c4", amount:141400, date:"2026-08-29", status:"open"},
   {id:"a2", type:"pep",         cust:"c3", amount:0,      date:"2026-08-27", status:"open"},
-  {id:"a3", type:"highvalue",   cust:"c1", amount:68200,  date:"2026-08-24", status:"cleared"},
+  {id:"a3", type:"highvalue",   cust:"c1", amount:53137,  date:"2026-08-31", status:"cleared"},
 ];
-
 let CDD = [
-  {cust:"c1", idType:"qid",      num:"284•••••417", expiry:"2029-03-11", by:"H. Nasser",  date:"2026-08-24"},
-  {cust:"c2", idType:"passport", num:"P4•••••82",   expiry:"2031-07-02", by:"A. Rahman",  date:"2026-08-19"},
+  {cust:"c1", custName:"Fatima Al-Muraikhi", idType:"qid",      num:"284•••••417", expiry:"2029-03-11", by:"u2", date:"2026-08-31"},
+  {cust:"c2", custName:"Rajesh Kumar",       idType:"passport", num:"P4•••••82",   expiry:"2031-07-02", by:"u3", date:"2026-08-19"},
 ];
+let AUDIT = [
+  {t:"2026-08-31 09:15", user:"u1", act:"rate",     detail:"24K 421.15 → 422.75"},
+  {t:"2026-08-31 10:42", user:"u2", act:"discount", detail:"SW-26-01186 · 4% on making"},
+  {t:"2026-08-31 11:08", user:"u2", act:"cdd",      detail:"SW-26-01187 · QID recorded"},
+  {t:"2026-08-30 18:30", user:"u1", act:"close",    detail:"Landmark · variance −120.00"},
+];
+let CLOSES = [];
 
 /* ---------------- state ---------------- */
 let S = {
-  lang:"en",
-  view:"board",
-  branch:"sw",
-  rates:null,
-  ratesSetAt:"09:15",
-  spot:3612.40,
-  fx:3.6400,
-  spreadPct:2.0,
-  bill:{ lines:[], oldGold:[], customer:"", tender:{cash:0,card:0,transfer:0}, lockedRates:null, lockedAt:null },
-  stockFilter:{ karat:"", q:"" },
+  lang:"en", user:null, view:"board", branch:"sw",
+  spot:3612.40, fx:3.6400, spreadPct:2.0, ratesSetAt:"09:15", rates:null,
+  bill:null, tab:{}, stockFilter:{karat:"",q:""}, countedCash:"",
 };
-
 function computeRates(spot, fx, spreadPct){
-  const perGram24 = (spot / 31.1034768) * fx;
-  const out = {};
+  const base = (spot/31.1034768)*fx, out = {};
   for (const k of [24,22,21,18]){
-    const sell = perGram24 * KARAT_PURITY[k];
-    out[k] = { sell: round2(sell), buy: round2(sell * (1 - spreadPct/100)) };
+    const sell = base*PURITY[k];
+    out[k] = {sell:round2(sell), buy:round2(sell*(1-spreadPct/100))};
   }
   return out;
 }
-S.rates = computeRates(S.spot, S.fx, S.spreadPct);
-S.bill.lockedRates = JSON.parse(JSON.stringify(S.rates));
-S.bill.lockedAt = S.ratesSetAt;
-
-/* ---------------- helpers ---------------- */
-const t = () => T[S.lang];
-function round2(n){ return Math.round(n*100)/100; }
-function round3(n){ return Math.round(n*1000)/1000; }
-const g  = n => Number(n).toLocaleString(S.lang==="ar"?"ar-QA":"en-QA",{minimumFractionDigits:3,maximumFractionDigits:3});
-const q  = n => Number(n).toLocaleString(S.lang==="ar"?"ar-QA":"en-QA",{minimumFractionDigits:2,maximumFractionDigits:2});
-const q0 = n => Number(n).toLocaleString(S.lang==="ar"?"ar-QA":"en-QA",{maximumFractionDigits:0});
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const nameOf = o => S.lang==="ar" ? o.ar : o.en;
-const branchName = id => { const b = BRANCHES.find(x=>x.id===id); return b ? nameOf(b) : id; };
-const custName = id => { const c = CUSTOMERS.find(x=>x.id===id); return c ? nameOf(c) : t().walkIn; };
-const fine = (net, k) => net * KARAT_PURITY[k];
-const netOf = it => round3(it.gross - it.stone);
-
-function makingCharge(it, goldValue){
-  if (it.mk === "g")   return netOf(it) * it.mkv;
-  if (it.mk === "p")   return it.mkv;
-  return goldValue * it.mkv / 100;
+function newBill(){
+  return {lines:[], oldGold:[], customer:"", discPct:0, discApprovedBy:"",
+          tender:{cash:0,card:0,transfer:0},
+          lockedRates:JSON.parse(JSON.stringify(S.rates)), lockedAt:S.ratesSetAt};
 }
-function makingLabel(it){
-  if (it.mk === "g")   return q(it.mkv) + " / " + (S.lang==="ar"?"جم":"g");
-  if (it.mk === "p")   return q(it.mkv) + " " + t().perPiece;
-  return it.mkv + " " + t().pctOfGold;
+S.rates = computeRates(S.spot, S.fx, S.spreadPct);
+S.bill = newBill();
+
+/* ---------------- engine ---------------- */
+const netOf   = it => round3(it.gross - it.stone);
+const fine    = (net,k) => net*PURITY[k];
+function makingCharge(it, goldValue){
+  if (it.mk==="g") return netOf(it)*it.mkv;
+  if (it.mk==="p") return it.mkv;
+  return goldValue*it.mkv/100;
 }
 function priceLine(it, rates){
-  const net = netOf(it);
-  const rate = rates[it.k].sell;
-  const goldValue = net * rate;
-  const mk = makingCharge(it, goldValue);
-  return { net, rate, goldValue, making:mk, stones:it.stoneVal||0, total: goldValue + mk + (it.stoneVal||0) };
+  const net = netOf(it), rate = rates[it.k].sell;
+  const goldValue = net*rate;
+  const making = makingCharge(it, goldValue);
+  const stones = it.stoneVal||0;
+  return {net, rate, goldValue, making, stones, total:goldValue+making+stones};
 }
+function billTotals(b){
+  let gold=0, making=0, stones=0;
+  b.lines.forEach(tag=>{
+    const it = STOCK.find(s=>s.tag===tag); if(!it) return;
+    const p = priceLine(it, b.lockedRates);
+    gold+=p.goldValue; making+=p.making; stones+=p.stones;
+  });
+  const discount = making*(b.discPct||0)/100;          // discount applies to making only
+  const oldGoldCredit = b.oldGold.reduce((a,o)=>a+o.credit,0);
+  const sub = gold + making - discount + stones;
+  return {gold, making, stones, discount, sub, oldGoldCredit, net:Math.max(0, sub-oldGoldCredit)};
+}
+function metalNet(m){ return m.owned + m.scrap + m.atKarigar - m.owed }
+function metalTotals(){
+  return Object.values(METAL).reduce((a,m)=>({
+    owned:a.owned+m.owned, consigned:a.consigned+m.consigned, scrap:a.scrap+m.scrap,
+    owed:a.owed+m.owed, atKarigar:a.atKarigar+m.atKarigar
+  }),{owned:0,consigned:0,scrap:0,owed:0,atKarigar:0});
+}
+function jobVariance(j){
+  if (j.status!=="done") return null;
+  const shortfall = j.issued - j.received;
+  const allowed = j.issued*j.tol/100;
+  return {shortfall, allowed, breach: shortfall > allowed + 1e-9};
+}
+function nextInvoiceNo(branch){
+  const code = BRANCHES.find(b=>b.id===branch).code;
+  const seq = SALES.filter(s=>s.branch===branch).length + 1;
+  return code + "-26-" + String(1187+seq).padStart(5,"0");
+}
+function log(act, detail){
+  const d = new Date();
+  AUDIT.unshift({t:TODAY+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"),
+                 user:S.user, act, detail});
+}
+const me       = () => USERS.find(u=>u.id===S.user) || USERS[0];
+const myRole   = () => ROLES[me().role];
+const can      = k => !!myRole()[k];
 
-function toast(msg){
+/* ---------------- language ---------------- */
+const T = {
+en:{
+  dir:"ltr", brand:"AYAR", brandSub:"Gold retail management<br>State of Qatar",
+  signIn:"Choose your account to sign in", demoNote:"Demonstration data",
+  signOut:"Sign out", roleOwner:"Owner", roleManager:"Branch manager", roleSales:"Sales",
+  nav:{board:"Board",counter:"Counter",register:"Sales register",stock:"Stock",workshop:"Workshop",
+       purchases:"Purchases",metal:"Metal position",dayclose:"Day close",compliance:"Compliance"},
+  grpTrade:"Trade", grpMetal:"Metal", grpControl:"Control",
+  boardTitle:"Rate board", asOf:"Set at", spot:"Spot", sell:"Sell", buy:"Buy back", perGram:"per gram",
+  reviseRate:"Revise rate", noRateRight:"Only an owner or branch manager can change rates",
+  branch:"Branch", allBranches:"All branches",
+
+  v_board_h:"Today across the chain",
+  v_board_p:"One rate board, four branches. Rates published here apply everywhere at once, and every open bill keeps the rate it was locked at.",
+  todaySales:"Sales today", pieces:"pieces", invoices:"invoices", oldGoldIn:"Old gold taken in",
+  makingMargin:"Making charge margin", metalMargin:"Metal position gain",
+  makingSub:"Earned on workmanship — steady", metalSub:"Unrealised on stock held — moves with the rate",
+  branchToday:"Branch performance today", turnover:"Turnover", exchanged:"Exchanged in",
+  openAlerts:"Needs attention", openJobs:"Metal out at the workshop",
+
+  v_counter_h:"Sales counter",
+  v_counter_p:"Every line is priced from weight, not from a price tag. The customer sees exactly how the number was built.",
+  customer:"Customer", selectCustomer:"Select customer", walkIn:"Walk-in customer", phone:"Phone",
+  addItem:"Add a piece", scanTag:"Scan or type a tag", tag:"Tag", item:"Item", karat:"Karat",
+  grossWt:"Gross", stoneWt:"Stone", netWt:"Net", fineWt:"Fine",
+  making:"Making", stones:"Stones", rate:"Rate", amount:"Amount", discount:"Discount on making",
+  goldValue:"Gold value", perPiece:"per piece", pctOfGold:"% of gold value",
+  noLines:"No pieces on this bill yet. Add one from stock to see the pricing break down.",
+  oldGold:"Old gold exchange",
+  oldGoldHelp:"Weigh, test and assess the customer's old gold. It is credited against this bill and enters scrap stock.",
+  addOldGold:"Take in old gold", deduction:"Deduction", assessedAt:"Assessed at",
+  noOldGold:"Nothing taken in on this bill.",
+  subtotal:"Gold and making", lessOldGold:"Less old gold credit", netPayable:"Net payable",
+  tender:"Payment", cash:"Cash", card:"Card", transfer:"Bank transfer",
+  complete:"Complete sale", clearBill:"Clear bill", preview:"Preview invoice",
+  rateLocked:"Rate locked", rateMoved:"Rate moved since this bill opened",
+  discLimit:"Your limit is", discNeedsApproval:"Above your limit — manager approval required",
+  approve:"Approve discount", approvedBy:"Approved by", approvalNeeded:"Approval needed",
+  approverPin:"Approving user", grant:"Grant approval",
+  amlGate:"Customer due diligence required",
+  amlGateBody:"The cash portion of this sale is at or above QAR 50,000. Dealers in precious metals are designated non-financial businesses at this threshold, so identification must be recorded before the sale can be completed.",
+  idType:"Identification", qid:"Qatari ID", passport:"Passport", cr:"Commercial registration",
+  idNumber:"Number", fullName:"Name as on document", expiry:"Expiry",
+  recordAndContinue:"Record and complete", cancel:"Cancel", close:"Close",
+  cashSoFar:"Cash on this sale", ofThreshold:"of the QAR 50,000 threshold",
+  saleDone:"Sale recorded", saleDoneAml:"Sale recorded with due diligence on file",
+  tenderShort:"Payment entered is less than the amount due",
+
+  v_reg_h:"Sales register",
+  v_reg_p:"Every bill the chain has issued, with the rate it was struck at. Nothing is deleted — a cancelled sale is marked void and stays on the record.",
+  invNo:"Invoice", date:"Date", soldBy:"Sold by", statusCol:"Status",
+  viewInvoice:"View", voidSale:"Void", voided:"Void", voidedOk:"Sale voided and kept on the record",
+  noVoidRight:"Only an owner or branch manager can void a sale",
+  reprint:"Print", cddOnFile:"ID on file",
+
+  v_stock_h:"Tagged stock",
+  v_stock_p:"Each piece carries its own tag, weight and karat. Stock is counted two ways at once — by piece and by weight — because a count that reconciles one and not the other has not reconciled.",
+  allKarats:"All karats", search:"Search tag or item", transfer:"Transfer", transferred:"Piece transferred",
+  pieceCount:"Pieces", totalNet:"Net weight", totalFine:"Fine weight", stockValue:"Value at today's rate",
+  scrapPill:"Scrap", noStock:"No pieces match this filter.",
+
+  v_work_h:"Workshop",
+  v_work_p:"Metal issued to a goldsmith is still yours, but it is not in the showroom. Each job carries an expected return and a wastage tolerance, so a shortfall is visible the day the piece comes back.",
+  jobId:"Job", karigar:"Goldsmith", issuedWt:"Issued", expectedWt:"Expected back", receivedWt:"Received",
+  tolerance:"Tolerance", variance:"Variance", withinTol:"Within tolerance", overTol:"Over tolerance",
+  outAtWorkshop:"Out at the workshop", receiveJob:"Receive", newJob:"Issue metal", description:"Description",
+  jobReceived:"Job received", jobIssued:"Metal issued to the workshop", statusOut:"Out", statusDone:"Received",
+  jobBreach:"Shortfall exceeds the agreed tolerance — hold the settlement and query it.",
+
+  v_pur_h:"Purchases",
+  v_pur_p:"Metal bought unfixed is owed to the supplier in grams, not riyals. Until it is fixed, every move in the rate moves what you owe.",
+  supplier:"Supplier", fineBought:"Fine weight", mode:"Basis", unfixed:"Unfixed", fixed:"Fixed",
+  fixNow:"Fix at today's rate", fixedOk:"Purchase fixed", openPos:"Open unfixed", settled:"Settled",
+  costAtToday:"Cost if fixed today", newPurchase:"Record a purchase", purchaseAdded:"Purchase recorded",
+
+  v_metal_h:"Metal position",
+  v_metal_p:"A gold shop keeps two ledgers. The riyal ledger is ordinary accounting. This is the other one — everything owned and owed in fine gold grams, because that is the unit the supplier settles in.",
+  ownedStock:"Owned stock", consigned:"On consignment", scrapHeld:"Scrap held", atKarigar:"At the workshop",
+  supplierOwed:"Owed to suppliers", netPosition:"Net metal position", fineGrams:"fine g",
+  longPos:"Long — exposed to a falling rate", shortPos:"Short — exposed to a rising rate",
+  byBranch:"By branch", consolidated:"Consolidated", valueAt:"Valued at today's 24K rate",
+  metalExplain:"Net position is owned stock, plus scrap, plus metal out at the workshop, less what is owed to suppliers on unfixed purchases. Consigned metal belongs to the supplier and is excluded.",
+  sensitivity:"If the rate moves",
+
+  v_close_h:"Day close",
+  v_close_p:"Count the drawer, compare it to what the system expects, and explain the difference. Once a day is closed its bills can no longer be edited.",
+  expectedCash:"Cash expected", countedCash:"Cash counted", varianceCash:"Variance",
+  closeDay:"Close the day", closedOk:"Day closed", alreadyClosed:"This day is already closed",
+  enterCount:"Enter the counted amount to close", cardTotal:"Card", transferTotal:"Transfer",
+  closedBy:"Closed by", overShort:"Over / short", noVarianceOk:"Drawer agrees",
+  varianceFlag:"Variance recorded and logged to the audit trail",
+
+  v_comp_h:"Compliance register",
+  v_comp_p:"Dealers in precious metals or stones are supervised by the Ministry of Commerce and Industry under Law No. 20 of 2019. Due diligence, monitoring and reporting are built into the sale, not filed afterwards.",
+  tabAlerts:"Monitoring alerts", tabCdd:"Due diligence", tabAudit:"Audit trail",
+  cddRecords:"Records on file", alerts:"Alerts", retention:"Records retained",
+  retentionSub:"Ten years, above the five-year statutory minimum",
+  alertStructuring:"Repeated payments just under the threshold",
+  alertStructuringBody:"Three cash sales below QAR 50,000 within 30 days, none individually triggering due diligence.",
+  alertPep:"Politically exposed person match",
+  alertPepBody:"Screening returned a possible match on a family member of a listed official. Enhanced due diligence required before any further sale.",
+  alertHighValue:"High value cash sale",
+  alertHighValueBody:"Cash portion at or above the threshold. Identification recorded at the counter.",
+  escalate:"Escalate to MLRO", escalated:"Escalated to the money laundering reporting officer",
+  open:"Open", cleared:"Cleared", customerCol:"Customer", amountCol:"Amount", recordedBy:"Recorded by",
+  when:"When", who:"User", action:"Action", detail:"Detail",
+  actRate:"Rate published", actDiscount:"Discount approved", actCdd:"Due diligence recorded",
+  actClose:"Day closed", actVoid:"Sale voided", actSale:"Sale completed", actTransfer:"Stock transferred",
+  actJob:"Workshop job", actPurchase:"Purchase",
+
+  modalRate_h:"Publish new rates", modalRate_p:"Rates apply to all four branches at once. Bills already open keep the rate they locked.",
+  spotPrice:"Spot price (USD per ounce)", fx:"USD to QAR", spread:"Buy-back spread",
+  publish:"Publish to all branches", ratesPublished:"New rates published to all branches", computed:"Computed per-gram rates",
+  modalOld_h:"Take in old gold", testMethod:"Test method", touchstone:"Touchstone", xrf:"XRF analyser",
+  declared:"Customer declared", assessedKarat:"Assessed karat", weightIn:"Weight",
+  modalAdd_h:"Add a piece to the bill",
+
+  invTitle:"Tax Invoice", invTo:"Billed to", invBranch:"Branch", invDate:"Date", invNoLabel:"Invoice no.",
+  invServedBy:"Served by", invDesc:"Description", invHallmark:"Hallmarked to Qatari standard purity",
+  invDeclare:"Weights shown in grams. Gold priced at the rate stated per gram at the time of billing. Old gold accepted after assay; the assessed karat and deduction are shown above. Records of this transaction are retained for ten years.",
+  invAml:"Identification recorded under Law No. 20 of 2019 on Combating Money Laundering and Terrorism Financing.",
+  invNoTax:"No value added tax is currently levied in the State of Qatar.",
+  invCustomer:"Customer signature", invAuthorised:"For AYAR Jewellery",
+},
+ar:{
+  dir:"rtl", brand:"عِيار", brandSub:"إدارة تجارة الذهب<br>دولة قطر",
+  signIn:"اختر حسابك لتسجيل الدخول", demoNote:"بيانات تجريبية",
+  signOut:"تسجيل الخروج", roleOwner:"المالك", roleManager:"مدير الفرع", roleSales:"بائع",
+  nav:{board:"اللوحة",counter:"نقطة البيع",register:"سجل المبيعات",stock:"المخزون",workshop:"الورشة",
+       purchases:"المشتريات",metal:"مركز المعدن",dayclose:"إقفال اليوم",compliance:"الامتثال"},
+  grpTrade:"البيع", grpMetal:"المعدن", grpControl:"الرقابة",
+  boardTitle:"لوحة الأسعار", asOf:"حُدِّد", spot:"العالمي", sell:"بيع", buy:"شراء", perGram:"للجرام",
+  reviseRate:"تعديل السعر", noRateRight:"تعديل الأسعار للمالك أو مدير الفرع فقط",
+  branch:"الفرع", allBranches:"جميع الفروع",
+
+  v_board_h:"اليوم على مستوى الفروع",
+  v_board_p:"لوحة أسعار واحدة وأربعة فروع. السعر المنشور هنا يسري في كل فرع فوراً، وكل فاتورة مفتوحة تحتفظ بالسعر المثبَّت عليها.",
+  todaySales:"مبيعات اليوم", pieces:"قطعة", invoices:"فاتورة", oldGoldIn:"الذهب المستبدل",
+  makingMargin:"هامش أجرة الصنعة", metalMargin:"ربح مركز المعدن",
+  makingSub:"عائد الصنعة — ثابت", metalSub:"غير محقق على المخزون — يتحرك مع السعر",
+  branchToday:"أداء الفروع اليوم", turnover:"المبيعات", exchanged:"المستبدل",
+  openAlerts:"يحتاج متابعة", openJobs:"معدن لدى الورشة",
+
+  v_counter_h:"نقطة البيع",
+  v_counter_p:"كل سطر يُسعَّر بالوزن لا ببطاقة سعر. والعميل يرى كيف تكوَّن المبلغ بالضبط.",
+  customer:"العميل", selectCustomer:"اختر العميل", walkIn:"عميل عابر", phone:"الهاتف",
+  addItem:"إضافة قطعة", scanTag:"امسح أو اكتب رقم القطعة", tag:"الرقم", item:"الصنف", karat:"العيار",
+  grossWt:"القائم", stoneWt:"الأحجار", netWt:"الصافي", fineWt:"الخالص",
+  making:"الصنعة", stones:"الأحجار", rate:"السعر", amount:"المبلغ", discount:"خصم على الصنعة",
+  goldValue:"قيمة الذهب", perPiece:"للقطعة", pctOfGold:"% من قيمة الذهب",
+  noLines:"لا توجد قطع على هذه الفاتورة. أضف قطعة من المخزون لترى تفصيل التسعير.",
+  oldGold:"استبدال الذهب القديم",
+  oldGoldHelp:"وزن الذهب القديم وفحصه وتقدير عياره. يُخصم من هذه الفاتورة ويدخل مخزون الكسر.",
+  addOldGold:"استلام ذهب قديم", deduction:"الخصم", assessedAt:"قُدِّر بسعر",
+  noOldGold:"لم يُستلم ذهب قديم على هذه الفاتورة.",
+  subtotal:"الذهب والصنعة", lessOldGold:"ناقص قيمة الذهب القديم", netPayable:"صافي المستحق",
+  tender:"السداد", cash:"نقداً", card:"بطاقة", transfer:"تحويل بنكي",
+  complete:"إتمام البيع", clearBill:"إلغاء الفاتورة", preview:"معاينة الفاتورة",
+  rateLocked:"السعر مثبَّت", rateMoved:"تغيَّر السعر بعد فتح الفاتورة",
+  discLimit:"حدك المسموح", discNeedsApproval:"يتجاوز حدك — يلزم اعتماد المدير",
+  approve:"اعتماد الخصم", approvedBy:"اعتمده", approvalNeeded:"يلزم اعتماد",
+  approverPin:"المستخدم المعتمِد", grant:"منح الاعتماد",
+  amlGate:"مطلوب العناية الواجبة تجاه العميل",
+  amlGateBody:"الجزء النقدي من هذه العملية يبلغ 50,000 ريال أو يتجاوزها. تُعدُّ محال المعادن الثمينة من الأعمال غير المالية المحددة عند هذا الحد، لذا يلزم تسجيل الهوية قبل إتمام البيع.",
+  idType:"نوع الهوية", qid:"البطاقة القطرية", passport:"جواز السفر", cr:"السجل التجاري",
+  idNumber:"الرقم", fullName:"الاسم كما في الوثيقة", expiry:"تاريخ الانتهاء",
+  recordAndContinue:"تسجيل وإتمام", cancel:"إلغاء", close:"إغلاق",
+  cashSoFar:"النقد في هذه العملية", ofThreshold:"من حد الـ 50,000 ريال",
+  saleDone:"تم تسجيل البيع", saleDoneAml:"تم تسجيل البيع مع حفظ العناية الواجبة",
+  tenderShort:"المبلغ المدخل أقل من المستحق",
+
+  v_reg_h:"سجل المبيعات",
+  v_reg_p:"كل فاتورة أصدرتها الفروع بالسعر الذي حُرِّرت به. لا يُحذف شيء — الفاتورة الملغاة تُوسم ملغاة وتبقى في السجل.",
+  invNo:"الفاتورة", date:"التاريخ", soldBy:"البائع", statusCol:"الحالة",
+  viewInvoice:"عرض", voidSale:"إلغاء", voided:"ملغاة", voidedOk:"أُلغيت الفاتورة وبقيت في السجل",
+  noVoidRight:"إلغاء الفواتير للمالك أو مدير الفرع فقط",
+  reprint:"طباعة", cddOnFile:"الهوية محفوظة",
+
+  v_stock_h:"المخزون المُرقَّم",
+  v_stock_p:"لكل قطعة رقمها ووزنها وعيارها. ويُجرد المخزون بطريقتين معاً — بالعدد وبالوزن — لأن الجرد الذي يطابق أحدهما دون الآخر ليس جرداً.",
+  allKarats:"كل العيارات", search:"ابحث برقم القطعة أو الصنف", transfer:"تحويل", transferred:"تم نقل القطعة",
+  pieceCount:"عدد القطع", totalNet:"الوزن الصافي", totalFine:"الوزن الخالص", stockValue:"القيمة بسعر اليوم",
+  scrapPill:"كسر", noStock:"لا توجد قطع مطابقة.",
+
+  v_work_h:"الورشة",
+  v_work_p:"المعدن المسلَّم للصائغ ما زال ملكك، لكنه ليس في المعرض. لكل أمر وزن متوقع ونسبة هالك مسموحة، فيظهر النقص يوم عودة القطعة.",
+  jobId:"الأمر", karigar:"الصائغ", issuedWt:"المسلَّم", expectedWt:"المتوقع", receivedWt:"المستلم",
+  tolerance:"الهالك المسموح", variance:"الفرق", withinTol:"ضمن المسموح", overTol:"يتجاوز المسموح",
+  outAtWorkshop:"لدى الورشة", receiveJob:"استلام", newJob:"تسليم معدن", description:"الوصف",
+  jobReceived:"تم استلام الأمر", jobIssued:"سُلِّم المعدن للورشة", statusOut:"لدى الورشة", statusDone:"مستلم",
+  jobBreach:"النقص يتجاوز الهالك المتفق عليه — أوقف التسوية وراجع الصائغ.",
+
+  v_pur_h:"المشتريات",
+  v_pur_p:"المعدن المشترى غير مثبَّت السعر مستحق للمورد بالجرامات لا بالريال. وحتى يُثبَّت، كل حركة في السعر تحرك ما عليك.",
+  supplier:"المورد", fineBought:"الوزن الخالص", mode:"الأساس", unfixed:"غير مثبَّت", fixed:"مثبَّت",
+  fixNow:"تثبيت بسعر اليوم", fixedOk:"تم تثبيت السعر", openPos:"غير مثبَّت", settled:"مسوَّى",
+  costAtToday:"التكلفة لو ثُبِّت اليوم", newPurchase:"تسجيل شراء", purchaseAdded:"سُجِّل الشراء",
+
+  v_metal_h:"مركز المعدن",
+  v_metal_p:"محل الذهب يمسك دفترين. دفتر الريال محاسبة عادية، وهذا هو الدفتر الآخر — كل ما يُملك ويُستحق بجرامات الذهب الخالص، لأنها الوحدة التي يُسوَّى بها مع المورد.",
+  ownedStock:"مخزون مملوك", consigned:"أمانة", scrapHeld:"كسر", atKarigar:"لدى الورشة",
+  supplierOwed:"مستحق للموردين", netPosition:"صافي المركز", fineGrams:"جم خالص",
+  longPos:"مركز طويل — معرَّض لانخفاض السعر", shortPos:"مركز قصير — معرَّض لارتفاع السعر",
+  byBranch:"حسب الفرع", consolidated:"الإجمالي", valueAt:"مُقوَّم بسعر عيار 24 اليوم",
+  metalExplain:"صافي المركز هو المخزون المملوك زائد الكسر زائد المعدن لدى الورشة، ناقص المستحق للموردين على المشتريات غير المثبَّتة. المعدن الأمانة ملك للمورد ولا يدخل الحساب.",
+  sensitivity:"إذا تحرك السعر",
+
+  v_close_h:"إقفال اليوم",
+  v_close_p:"عُدَّ الدرج، وقارنه بما يتوقعه النظام، وفسِّر الفرق. وبعد الإقفال لا يمكن تعديل فواتير اليوم.",
+  expectedCash:"النقد المتوقع", countedCash:"النقد المعدود", varianceCash:"الفرق",
+  closeDay:"إقفال اليوم", closedOk:"أُقفل اليوم", alreadyClosed:"هذا اليوم مقفل بالفعل",
+  enterCount:"أدخل المبلغ المعدود للإقفال", cardTotal:"البطاقات", transferTotal:"التحويلات",
+  closedBy:"أقفله", overShort:"زيادة / عجز", noVarianceOk:"الدرج مطابق",
+  varianceFlag:"سُجِّل الفرق في سجل التدقيق",
+
+  v_comp_h:"سجل الامتثال",
+  v_comp_p:"تخضع محال المعادن والأحجار الثمينة لإشراف وزارة التجارة والصناعة بموجب القانون رقم 20 لسنة 2019. العناية الواجبة والمراقبة والإبلاغ مدمجة في عملية البيع لا تُستكمل بعدها.",
+  tabAlerts:"تنبيهات المراقبة", tabCdd:"العناية الواجبة", tabAudit:"سجل التدقيق",
+  cddRecords:"السجلات المحفوظة", alerts:"التنبيهات", retention:"مدة الحفظ",
+  retentionSub:"عشر سنوات، فوق الحد النظامي وهو خمس سنوات",
+  alertStructuring:"مدفوعات متكررة أقل من الحد بقليل",
+  alertStructuringBody:"ثلاث عمليات نقدية دون 50,000 ريال خلال 30 يوماً، ولم تستوجب أيٌّ منها منفردة العناية الواجبة.",
+  alertPep:"تطابق مع شخص سياسي ممثَّل للمخاطر",
+  alertPepBody:"أظهر الفحص تطابقاً محتملاً مع أحد أقارب مسؤول مدرج. تلزم العناية الواجبة المشددة قبل أي بيع لاحق.",
+  alertHighValue:"بيع نقدي مرتفع القيمة",
+  alertHighValueBody:"الجزء النقدي بلغ الحد أو تجاوزه. سُجِّلت الهوية عند نقطة البيع.",
+  escalate:"إحالة لمسؤول الإبلاغ", escalated:"أُحيلت إلى مسؤول الإبلاغ عن غسل الأموال",
+  open:"مفتوح", cleared:"مُغلق", customerCol:"العميل", amountCol:"المبلغ", recordedBy:"سجَّلها",
+  when:"الوقت", who:"المستخدم", action:"الإجراء", detail:"التفاصيل",
+  actRate:"نشر سعر", actDiscount:"اعتماد خصم", actCdd:"تسجيل عناية واجبة",
+  actClose:"إقفال يوم", actVoid:"إلغاء فاتورة", actSale:"إتمام بيع", actTransfer:"تحويل مخزون",
+  actJob:"أمر ورشة", actPurchase:"شراء",
+
+  modalRate_h:"نشر أسعار جديدة", modalRate_p:"تسري الأسعار على الفروع الأربعة معاً. والفواتير المفتوحة تحتفظ بسعرها المثبَّت.",
+  spotPrice:"السعر العالمي (دولار للأونصة)", fx:"الدولار مقابل الريال", spread:"فرق سعر الشراء",
+  publish:"نشر على جميع الفروع", ratesPublished:"نُشرت الأسعار على جميع الفروع", computed:"الأسعار المحسوبة للجرام",
+  modalOld_h:"استلام ذهب قديم", testMethod:"طريقة الفحص", touchstone:"محك", xrf:"جهاز XRF",
+  declared:"إفادة العميل", assessedKarat:"العيار المقدَّر", weightIn:"الوزن",
+  modalAdd_h:"إضافة قطعة إلى الفاتورة",
+
+  invTitle:"فاتورة", invTo:"العميل", invBranch:"الفرع", invDate:"التاريخ", invNoLabel:"رقم الفاتورة",
+  invServedBy:"البائع", invDesc:"البيان", invHallmark:"مدموغ حسب معيار النقاوة القطري",
+  invDeclare:"الأوزان بالجرام. سُعِّر الذهب بالسعر المذكور للجرام وقت التحرير. يُقبل الذهب القديم بعد الفحص، والعيار المقدَّر ونسبة الخصم مبيَّنان أعلاه. تُحفظ سجلات هذه العملية لمدة عشر سنوات.",
+  invAml:"سُجِّلت الهوية بموجب القانون رقم 20 لسنة 2019 بشأن مكافحة غسل الأموال وتمويل الإرهاب.",
+  invNoTax:"لا تُفرض ضريبة قيمة مضافة في دولة قطر حالياً.",
+  invCustomer:"توقيع العميل", invAuthorised:"عن مجوهرات عِيار",
+}};
+
+/* ---------------- format helpers ---------------- */
+const t  = () => T[S.lang];
+const loc = () => S.lang==="ar" ? "ar-QA" : "en-QA";
+const g  = n => Number(n).toLocaleString(loc(),{minimumFractionDigits:3,maximumFractionDigits:3});
+const q  = n => Number(n).toLocaleString(loc(),{minimumFractionDigits:2,maximumFractionDigits:2});
+const q0 = n => Number(n).toLocaleString(loc(),{maximumFractionDigits:0});
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nm = o => o ? (S.lang==="ar"?o.ar:o.en) : "";
+const branchName = id => nm(BRANCHES.find(b=>b.id===id)) || id;
+const custName   = id => nm(CUSTOMERS.find(c=>c.id===id)) || t().walkIn;
+const userName   = id => nm(USERS.find(u=>u.id===id)) || id;
+const supName    = id => nm(SUPPLIERS.find(s=>s.id===id)) || id;
+const karName    = id => nm(KARIGARS.find(k=>k.id===id)) || id;
+const roleName   = r => ({owner:t().roleOwner, manager:t().roleManager, sales:t().roleSales}[r]);
+const kLabel     = k => S.lang==="ar" ? "عيار "+k : k+"K";
+const gUnit      = () => S.lang==="ar" ? "جم" : "g";
+
+function toast(msg, bad){
   const h = document.getElementById("toastHost");
-  h.innerHTML = '<div class="toast">'+esc(msg)+'</div>';
-  clearTimeout(toast._t);
-  toast._t = setTimeout(()=>{ h.innerHTML=""; }, 3200);
+  h.innerHTML = '<div class="toast'+(bad?" bad":"")+'">'+esc(msg)+'</div>';
+  clearTimeout(toast._t); toast._t = setTimeout(()=>{h.innerHTML="";}, 3400);
 }
-function closeModal(){ document.getElementById("modalHost").innerHTML = ""; }
+function closeModal(){ document.getElementById("modalHost").innerHTML=""; }
+function makingLabel(it){
+  if (it.mk==="g") return q(it.mkv)+" / "+gUnit();
+  if (it.mk==="p") return q(it.mkv)+" "+t().perPiece;
+  return it.mkv+" "+t().pctOfGold;
+}
+const actLabel = a => ({rate:t().actRate, discount:t().actDiscount, cdd:t().actCdd, close:t().actClose,
+  void:t().actVoid, sale:t().actSale, transfer:t().actTransfer, job:t().actJob, purchase:t().actPurchase}[a]||a);
+const alertTitle = a => ({structuring:t().alertStructuring, pep:t().alertPep, highvalue:t().alertHighValue}[a.type]);
+const alertBody  = a => ({structuring:t().alertStructuringBody, pep:t().alertPepBody, highvalue:t().alertHighValueBody}[a.type]);
 
-/* ---------------- language / routing ---------------- */
-function setLang(l){
-  S.lang = l;
-  document.documentElement.lang = l;
-  document.documentElement.dir = T[l].dir;
-  document.body.dir = T[l].dir;
-  document.getElementById("langEn").setAttribute("aria-pressed", l==="en");
-  document.getElementById("langAr").setAttribute("aria-pressed", l==="ar");
-  document.getElementById("brandName").textContent = T[l].brand;
-  document.getElementById("brandSub").innerHTML = T[l].brandSub;
-  document.getElementById("railNote").textContent = T[l].demoData;
-  syncUrl(); renderAll();
+/* ---------------- login ---------------- */
+function viewLogin(){
+  const L = t();
+  return `<div class="gate"><div class="box">
+    <div class="top"><h1>${esc(L.brand)}</h1><p>${L.brandSub.replace("<br>"," · ")}</p></div>
+    <div class="who">
+      ${USERS.map(u=>`<button onclick="signIn('${u.id}')">
+        <span class="av">${esc(u.init)}</span>
+        <span><span class="nm">${esc(nm(u))}</span><br>
+        <span class="rl">${esc(roleName(u.role))} · ${esc(branchName(u.branch))}</span></span>
+      </button>`).join("")}
+    </div>
+    <div class="ft">
+      <button onclick="setLang('en')" aria-pressed="${S.lang==="en"}">English</button>
+      <button onclick="setLang('ar')" aria-pressed="${S.lang==="ar"}">العربية</button>
+    </div>
+  </div></div>`;
 }
-function go(v){ S.view = v; syncUrl(); renderAll(); }
-function syncUrl(){
-  const p = new URLSearchParams();
-  p.set("lang", S.lang); p.set("view", S.view); p.set("branch", S.branch);
-  history.replaceState(null, "", "?" + p.toString());
+function signIn(id){
+  S.user = id;
+  const u = USERS.find(x=>x.id===id);
+  if (ROLES[u.role].branchLock) S.branch = u.branch;
+  S.view = "board"; S.bill = newBill();
+  renderAll();
 }
+function signOut(){ S.user=null; S.view="board"; renderAll(); }
 
 /* ---------------- rate board ---------------- */
 function renderBoard(flash){
   const L = t();
-  const karats = [24,22,21,18].map(k => `
+  const karats = [24,22,21,18].map(k=>`
     <div class="karat${flash?" flash":""}">
-      <div class="k">${S.lang==="ar" ? "عيار "+k : k+"K"} · ${(KARAT_PURITY[k]*1000).toFixed(0)}</div>
+      <div class="k">${esc(kLabel(k))} · ${(PURITY[k]*1000).toFixed(0)}</div>
       <div class="sell">${q(S.rates[k].sell)}</div>
-      <div class="buy">${L.buy} ${q(S.rates[k].buy)}</div>
+      <div class="buy">${esc(L.buy)} ${q(S.rates[k].buy)}</div>
     </div>`).join("");
-
-  document.getElementById("board").innerHTML = `
-    <div class="stamp">
-      <b>${esc(L.boardTitle)}</b>
-      ${esc(L.asOf)} ${S.ratesSetAt} · QAR ${esc(L.perGram)}
-    </div>
+  return `<div class="board" id="board">
+    <div class="stamp"><b>${esc(L.boardTitle)}</b>${esc(L.asOf)} ${S.ratesSetAt} · QAR ${esc(L.perGram)}</div>
     <div class="karats">${karats}</div>
     <div class="act">
       <span class="tiny" style="color:#8FA6A0">${esc(L.spot)} $${q(S.spot)}</span>
-      <button onclick="openRateModal()">${esc(L.reviseRate)}</button>
-    </div>`;
+      <button onclick="openRateModal()" ${can("canRate")?"":"disabled title='"+esc(L.noRateRight)+"'"}>${esc(L.reviseRate)}</button>
+    </div></div>`;
 }
-
 function openRateModal(){
+  if (!can("canRate")) return toast(t().noRateRight, true);
   const L = t();
   document.getElementById("modalHost").innerHTML = `
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="box">
-      <h3>${esc(L.modalRate_h)}</h3>
-      <div class="mb">
-        <p class="tiny dim" style="margin-top:0">${esc(L.modalRate_p)}</p>
-        <div class="frow">
-          <label class="f"><span>${esc(L.spotPrice)}</span>
-            <input id="rSpot" class="num" type="number" step="0.01" value="${S.spot}" oninput="previewRates()"></label>
-          <label class="f"><span>${esc(L.fx)}</span>
-            <input id="rFx" class="num" type="number" step="0.0001" value="${S.fx}" oninput="previewRates()"></label>
-        </div>
-        <label class="f"><span>${esc(L.spread)} (%)</span>
-          <input id="rSpread" class="num" type="number" step="0.1" value="${S.spreadPct}" oninput="previewRates()"></label>
-        <div class="note" style="margin-top:4px">
-          <div style="margin-bottom:5px">${esc(L.computed)}</div>
-          <div id="ratePreview" class="formula"></div>
-        </div>
+  <div class="modal" role="dialog" aria-modal="true"><div class="box">
+    <h3>${esc(L.modalRate_h)}</h3>
+    <div class="mb">
+      <p class="tiny dim" style="margin-top:0">${esc(L.modalRate_p)}</p>
+      <div class="frow">
+        <label class="f"><span>${esc(L.spotPrice)}</span><input id="rSpot" class="num" type="number" step="0.01" value="${S.spot}" oninput="previewRates()"></label>
+        <label class="f"><span>${esc(L.fx)}</span><input id="rFx" class="num" type="number" step="0.0001" value="${S.fx}" oninput="previewRates()"></label>
       </div>
-      <div class="mf">
-        <button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
-        <button class="btn gold" onclick="publishRates()">${esc(L.publish)}</button>
-      </div>
+      <label class="f"><span>${esc(L.spread)} (%)</span><input id="rSpread" class="num" type="number" step="0.1" value="${S.spreadPct}" oninput="previewRates()"></label>
+      <div class="note"><div style="margin-bottom:4px">${esc(L.computed)}</div><div id="ratePreview" class="formula"></div></div>
     </div>
-  </div>`;
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="publishRates()">${esc(L.publish)}</button></div>
+  </div></div>`;
   previewRates();
 }
 function previewRates(){
-  const spot = parseFloat(document.getElementById("rSpot").value)||0;
-  const fx   = parseFloat(document.getElementById("rFx").value)||0;
-  const sp   = parseFloat(document.getElementById("rSpread").value)||0;
-  const r = computeRates(spot, fx, sp);
-  document.getElementById("ratePreview").innerHTML = [24,22,21,18].map(k =>
-    `${S.lang==="ar"?"عيار "+k:k+"K"} &nbsp; <b>${q(r[k].sell)}</b> &nbsp;<span class="dim">${esc(t().buy)} ${q(r[k].buy)}</span>`
-  ).join("<br>");
+  const sp=parseFloat(document.getElementById("rSpot").value)||0;
+  const fx=parseFloat(document.getElementById("rFx").value)||0;
+  const sd=parseFloat(document.getElementById("rSpread").value)||0;
+  const r=computeRates(sp,fx,sd);
+  document.getElementById("ratePreview").innerHTML=[24,22,21,18].map(k=>
+    `${esc(kLabel(k))} &nbsp; <b>${q(r[k].sell)}</b> &nbsp;<span class="dim">${esc(t().buy)} ${q(r[k].buy)}</span>`).join("<br>");
 }
 function publishRates(){
-  S.spot     = parseFloat(document.getElementById("rSpot").value)||S.spot;
-  S.fx       = parseFloat(document.getElementById("rFx").value)||S.fx;
-  S.spreadPct= parseFloat(document.getElementById("rSpread").value)||S.spreadPct;
-  S.rates = computeRates(S.spot, S.fx, S.spreadPct);
-  const d = new Date();
-  S.ratesSetAt = String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
-  closeModal();
-  renderBoard(true);
-  renderView();
-  toast(t().ratesPublished);
+  const old24 = S.rates[24].sell;
+  S.spot=parseFloat(document.getElementById("rSpot").value)||S.spot;
+  S.fx=parseFloat(document.getElementById("rFx").value)||S.fx;
+  S.spreadPct=parseFloat(document.getElementById("rSpread").value)||S.spreadPct;
+  S.rates=computeRates(S.spot,S.fx,S.spreadPct);
+  const d=new Date();
+  S.ratesSetAt=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  log("rate","24K "+q(old24)+" → "+q(S.rates[24].sell));
+  closeModal(); renderAll(true); toast(t().ratesPublished);
 }
 
 /* ---------------- nav ---------------- */
 function renderNav(){
-  const L = t();
-  const openAlerts = ALERTS.filter(a=>a.status==="open").length;
-  const items = [
-    ["board", L.nav.board, ""],
-    ["counter", L.nav.counter, S.bill.lines.length ? String(S.bill.lines.length) : ""],
-    ["stock", L.nav.stock, String(STOCK.filter(s=>s.status==="in").length)],
-    ["metal", L.nav.metal, ""],
-    ["compliance", L.nav.compliance, openAlerts ? String(openAlerts) : ""],
+  const L=t(), openA=ALERTS.filter(a=>a.status==="open").length, openJ=JOBS.filter(j=>j.status==="out").length;
+  const groups=[
+    [L.grpTrade,[["board",L.nav.board,""],["counter",L.nav.counter,S.bill.lines.length||""],
+                 ["register",L.nav.register,""],["stock",L.nav.stock,STOCK.filter(s=>s.status==="in").length]]],
+    [L.grpMetal,[["workshop",L.nav.workshop,openJ||""],["purchases",L.nav.purchases,PURCHASES.filter(p=>p.status==="open").length||""],
+                 ["metal",L.nav.metal,""]]],
+    [L.grpControl,[["dayclose",L.nav.dayclose,""],["compliance",L.nav.compliance,openA||""]]],
   ];
-  document.getElementById("nav").innerHTML = items.map(([id,label,tally])=>`
-    <button onclick="go('${id}')" aria-current="${S.view===id}">
-      <span>${esc(label)}</span>
-      ${tally?`<span class="tally${id==="compliance"?" warn":""}">${esc(tally)}</span>`:""}
-    </button>`).join("");
+  return groups.map(([g,items])=>`<div class="sep">${esc(g)}</div>`+items.map(([id,label,tally])=>`
+    <button onclick="go('${id}')" aria-current="${S.view===id}"><span>${esc(label)}</span>
+    ${tally?`<span class="tally${id==="compliance"?" warn":""}">${esc(String(tally))}</span>`:""}</button>`).join("")).join("");
+}
+function go(v){ S.view=v; syncUrl(); renderAll(); }
+function syncUrl(){
+  const p=new URLSearchParams();
+  p.set("lang",S.lang); p.set("view",S.view); p.set("branch",S.branch);
+  if (S.user) p.set("as",S.user);
+  history.replaceState(null,"","?"+p.toString());
+}
+function setLang(l){
+  S.lang=l; document.documentElement.lang=l; document.documentElement.dir=T[l].dir; document.body.dir=T[l].dir;
+  syncUrl(); renderAll();
 }
 
-/* ---------------- view: board ---------------- */
+/* ================= board ================= */
 function viewBoard(){
-  const L = t();
-  const totals = Object.values(BRANCH_DAY).reduce((a,b)=>({
-    inv:a.inv+b.inv, turnover:a.turnover+b.turnover, pieces:a.pieces+b.pieces, oldGold:a.oldGold+b.oldGold
-  }),{inv:0,turnover:0,pieces:0,oldGold:0});
+  const L=t();
+  const tot=Object.values(BRANCH_DAY).reduce((a,b)=>({inv:a.inv+b.inv,turnover:a.turnover+b.turnover,
+    pieces:a.pieces+b.pieces,oldGold:a.oldGold+b.oldGold}),{inv:0,turnover:0,pieces:0,oldGold:0});
+  const makingMargin=96400, base24=421.15;
+  const mt=metalTotals(), netFine=mt.owned+mt.scrap+mt.atKarigar-mt.owed;
+  const metalMargin=netFine*(S.rates[24].sell-base24);
+  const openA=ALERTS.filter(a=>a.status==="open"), openJ=JOBS.filter(j=>j.status==="out");
+  const outFine=openJ.reduce((a,j)=>a+fine(j.issued,j.k),0);
 
-  // illustrative split of margin
-  const makingMargin = 96400;
-  const baseRate24 = 421.15;
-  const totalOwnedFine = Object.values(METAL).reduce((a,m)=>a+m.owned+m.scrap-m.owed,0);
-  const metalMargin = totalOwnedFine * (S.rates[24].sell - baseRate24);
-
-  const rows = BRANCHES.map(b=>{
-    const d = BRANCH_DAY[b.id];
-    return `<tr>
-      <td><b>${esc(nameOf(b))}</b></td>
-      <td class="r mono">${q0(d.inv)}</td>
-      <td class="r mono">${q0(d.pieces)}</td>
-      <td class="r mono">${q0(d.turnover)}</td>
-      <td class="r mono">${g(d.oldGold)}</td>
-    </tr>`;
-  }).join("");
-
-  const openAlerts = ALERTS.filter(a=>a.status==="open");
-
-  return `
-  <div class="vhead">
-    <h2>${esc(L.v_board_h)}</h2>
-    <p>${esc(L.v_board_p)}</p>
-  </div>
-
+  return `<div class="vhead"><h2>${esc(L.v_board_h)}</h2><p>${esc(L.v_board_p)}</p></div>
   <div class="grid3">
-    <div class="panel"><div class="pbody">
-      <div class="metric">
-        <div class="lab">${esc(L.todaySales)}</div>
-        <div class="val">${q0(totals.turnover)}</div>
-        <div class="sub">QAR · ${q0(totals.inv)} ${esc(L.invoices)} · ${q0(totals.pieces)} ${esc(L.pieces)}</div>
-      </div>
-    </div></div>
-    <div class="panel"><div class="pbody">
-      <div class="metric">
-        <div class="lab">${esc(L.makingMargin)}</div>
-        <div class="val pos">${q0(makingMargin)}</div>
-        <div class="sub">${esc(L.makingSub)}</div>
-      </div>
-    </div></div>
-    <div class="panel"><div class="pbody">
-      <div class="metric">
-        <div class="lab">${esc(L.metalMargin)}</div>
-        <div class="val ${metalMargin>=0?"pos":"neg"}">${metalMargin>=0?"+":"−"}${q0(Math.abs(metalMargin))}</div>
-        <div class="sub">${esc(L.metalSub)}</div>
-      </div>
-    </div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.todaySales)}</div>
+      <div class="val">${q0(tot.turnover)}</div>
+      <div class="sub">QAR · ${q0(tot.inv)} ${esc(L.invoices)} · ${q0(tot.pieces)} ${esc(L.pieces)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.makingMargin)}</div>
+      <div class="val pos">${q0(makingMargin)}</div><div class="sub">${esc(L.makingSub)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.metalMargin)}</div>
+      <div class="val ${metalMargin>=0?"pos":"neg"}">${metalMargin>=0?"+":"−"}${q0(Math.abs(metalMargin))}</div>
+      <div class="sub">${esc(L.metalSub)}</div></div></div></div>
   </div>
-
-  <div class="panel">
-    <h3>${esc(L.branchToday)}<span class="side">${esc(L.oldGoldIn)}: ${g(totals.oldGold)} ${S.lang==="ar"?"جم":"g"}</span></h3>
-    <div class="pbody" style="padding:0">
-      <table>
-        <thead><tr>
-          <th>${esc(L.branch)}</th>
-          <th class="r">${esc(L.invoices)}</th>
-          <th class="r">${esc(L.pieces)}</th>
-          <th class="r">${esc(L.turnover)} (QAR)</th>
-          <th class="r">${esc(L.exchanged)} (g)</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  </div>
-
-  ${openAlerts.length ? `
-  <div class="panel">
-    <h3>${esc(L.openAlerts)}</h3>
-    <div class="pbody stack">
-      ${openAlerts.map(a=>`
-        <div class="note ${a.type==="pep"?"red":""}">
-          <b>${esc(alertTitle(a))}</b> — ${esc(custName(a.cust))}
-          <div class="tiny" style="margin-top:2px">${esc(alertBody(a))}</div>
-        </div>`).join("")}
-    </div>
-  </div>` : ""}
-  `;
-}
-const alertTitle = a => ({structuring:t().alertStructuring, pep:t().alertPep, highvalue:t().alertHighValue}[a.type]);
-const alertBody  = a => ({structuring:t().alertStructuringBody, pep:t().alertPepBody, highvalue:t().alertHighValueBody}[a.type]);
-
-/* ---------------- view: counter ---------------- */
-function billTotals(){
-  const rates = S.bill.lockedRates;
-  let gold=0, making=0, stones=0;
-  S.bill.lines.forEach(tag=>{
-    const it = STOCK.find(s=>s.tag===tag); if(!it) return;
-    const p = priceLine(it, rates);
-    gold += p.goldValue; making += p.making; stones += p.stones;
-  });
-  const oldGoldCredit = S.bill.oldGold.reduce((a,o)=>a+o.credit,0);
-  const sub = gold + making + stones;
-  return { gold, making, stones, sub, oldGoldCredit, net: Math.max(0, sub - oldGoldCredit) };
+  <div class="panel"><h3>${esc(L.branchToday)}<span class="side">${esc(L.oldGoldIn)} ${g(tot.oldGold)} ${gUnit()}</span></h3>
+    <div class="pbody" style="padding:0"><table>
+      <thead><tr><th>${esc(L.branch)}</th><th class="r">${esc(L.invoices)}</th><th class="r">${esc(L.pieces)}</th>
+      <th class="r">${esc(L.turnover)}</th><th class="r">${esc(L.exchanged)}</th></tr></thead>
+      <tbody>${BRANCHES.map(b=>{const d=BRANCH_DAY[b.id];return `<tr>
+        <td><b>${esc(nm(b))}</b></td><td class="r">${q0(d.inv)}</td><td class="r">${q0(d.pieces)}</td>
+        <td class="r">${q0(d.turnover)}</td><td class="r">${g(d.oldGold)}</td></tr>`}).join("")}</tbody>
+    </table></div></div>
+  <div class="grid2">
+    ${openJ.length?`<div class="panel"><h3>${esc(L.openJobs)}<span class="side">${g(outFine)} ${esc(L.fineGrams)}</span></h3>
+      <div class="pbody stack">${openJ.map(j=>`<div class="rowline"><div class="grow">
+        <b>${esc(j.id)}</b> <span class="dim tiny">${esc(karName(j.karigar))} · ${esc(branchName(j.branch))}</span>
+        <div class="tiny dim">${esc(S.lang==="ar"?j.desc_ar:j.desc_en)}</div></div>
+        <div class="mono tiny">${g(j.issued)} ${gUnit()}</div></div>`).join("")}</div></div>`:""}
+    ${openA.length?`<div class="panel"><h3>${esc(L.openAlerts)}</h3><div class="pbody stack">
+      ${openA.map(a=>`<div class="note ${a.type==="pep"?"red":""}"><b>${esc(alertTitle(a))}</b> — ${esc(custName(a.cust))}
+      <div class="tiny" style="margin-top:2px">${esc(alertBody(a))}</div></div>`).join("")}</div></div>`:""}
+  </div>`;
 }
 
+/* ================= counter ================= */
 function viewCounter(){
-  const L = t();
-  const bt = billTotals();
-  const rateMoved = JSON.stringify(S.bill.lockedRates) !== JSON.stringify(S.rates) && S.bill.lines.length>0;
+  const L=t(), b=S.bill, bt=billTotals(b);
+  const moved=JSON.stringify(b.lockedRates)!==JSON.stringify(S.rates)&&b.lines.length>0;
+  const limit=myRole().maxDiscountPct;
+  const needsApproval=b.discPct>limit&&!b.discApprovedBy;
 
-  const lineRows = S.bill.lines.map(tag=>{
-    const it = STOCK.find(s=>s.tag===tag);
-    const p = priceLine(it, S.bill.lockedRates);
+  const lines=b.lines.map(tag=>{
+    const it=STOCK.find(s=>s.tag===tag), p=priceLine(it,b.lockedRates);
     return `<tr>
-      <td>
-        <b>${esc(nameOf(it))}</b>
-        <div class="tiny dim mono">${esc(it.tag)} · ${S.lang==="ar"?"عيار "+it.k:it.k+"K"}</div>
-      </td>
-      <td class="r mono tiny">
-        ${esc(L.grossWt)} ${g(it.gross)}<br>
+      <td><b>${esc(nm(it))}</b><div class="tiny dim mono">${esc(it.tag)} · ${esc(kLabel(it.k))}</div></td>
+      <td class="r mono tiny">${esc(L.grossWt)} ${g(it.gross)}<br>
         ${it.stone?`<span class="dim">${esc(L.stoneWt)} ${g(it.stone)}</span><br>`:""}
-        <b>${esc(L.netWt)} ${g(p.net)}</b>
-      </td>
-      <td class="formula tiny">
-        ${g(p.net)} × ${q(p.rate)} = <b>${q(p.goldValue)}</b><br>
+        <b>${esc(L.netWt)} ${g(p.net)}</b></td>
+      <td class="formula tiny">${g(p.net)} × ${q(p.rate)} = <b>${q(p.goldValue)}</b><br>
         <span class="dim">${esc(L.making)} ${makingLabel(it)} = ${q(p.making)}</span>
-        ${p.stones?`<br><span class="dim">${esc(L.stones)} = ${q(p.stones)}</span>`:""}
-      </td>
+        ${p.stones?`<br><span class="dim">${esc(L.stones)} = ${q(p.stones)}</span>`:""}</td>
       <td class="r mono"><b>${q(p.total)}</b></td>
-      <td class="r"><button class="btn ghost sm" onclick="removeLine('${it.tag}')">×</button></td>
-    </tr>`;
+      <td class="r"><button class="btn ghost sm" onclick="removeLine('${it.tag}')">×</button></td></tr>`;
   }).join("");
 
-  const oldRows = S.bill.oldGold.map((o,i)=>`
-    <div class="rowline">
-      <div class="grow">
-        <b class="mono">${g(o.wt)} ${S.lang==="ar"?"جم":"g"}</b>
-        <span class="pill grey">${S.lang==="ar"?"عيار "+o.k:o.k+"K"}</span>
-        <div class="tiny dim">${esc(L.assessedAt)} ${q(o.rate)} · ${esc(L.deduction)} ${o.ded}% · ${esc(o.method)}</div>
-      </div>
-      <div class="mono"><b>${q(o.credit)}</b></div>
-      <button class="btn ghost sm" onclick="removeOldGold(${i})">×</button>
-    </div>`).join("");
+  const oldRows=b.oldGold.map((o,i)=>`<div class="rowline"><div class="grow">
+    <b class="mono">${g(o.wt)} ${gUnit()}</b> <span class="pill grey">${esc(kLabel(o.k))}</span>
+    <div class="tiny dim">${esc(L.assessedAt)} ${q(o.rate)} · ${esc(L.deduction)} ${o.ded}% · ${esc(o.method)}</div></div>
+    <div class="mono"><b>${q(o.credit)}</b></div>
+    <button class="btn ghost sm" onclick="removeOldGold(${i})">×</button></div>`).join("");
 
-  const cash = S.bill.tender.cash;
-  const pct = Math.min(100, (cash / AML_CASH_THRESHOLD) * 100);
-  const meterCls = cash >= AML_CASH_THRESHOLD ? "over" : pct > 80 ? "near" : "";
+  const cash=b.tender.cash, pct=Math.min(100,cash/AML_CASH_THRESHOLD*100);
+  const mc=cash>=AML_CASH_THRESHOLD?"over":pct>80?"near":"";
+  const paid=cash+b.tender.card+b.tender.transfer;
 
-  return `
-  <div class="vhead">
-    <h2>${esc(L.v_counter_h)}</h2>
-    <p>${esc(L.v_counter_p)}</p>
-  </div>
-
+  return `<div class="vhead"><h2>${esc(L.v_counter_h)}</h2><p>${esc(L.v_counter_p)}</p></div>
+  ${branchPicker()}
   <div class="grid2" style="grid-template-columns:1.55fr 1fr">
     <div>
-      <div class="panel">
-        <h3>${esc(L.item)}
-          <span class="side">
-            ${rateMoved
-              ? `<span class="pill red">${esc(L.rateMoved)}</span>`
-              : `<span class="pill gold">${esc(L.rateLocked)} ${S.bill.lockedAt}</span>`}
-          </span>
-        </h3>
-        <div class="pbody" style="padding:0">
-          ${S.bill.lines.length ? `<table>
-            <thead><tr>
-              <th>${esc(L.item)}</th><th class="r">${esc(L.netWt)} (g)</th>
-              <th>${esc(L.rate)} × ${esc(L.netWt)}</th><th class="r">${esc(L.amount)}</th><th></th>
-            </tr></thead><tbody>${lineRows}</tbody></table>`
-            : `<div class="pbody dim">${esc(L.noLines)}</div>`}
-        </div>
-        <div style="padding:12px 16px;border-top:1px solid var(--rule)">
-          <button class="btn ghost" onclick="openAddItem()">+ ${esc(L.addItem)}</button>
-        </div>
-      </div>
+      <div class="panel"><h3>${esc(L.item)}<span class="side">
+        ${moved?`<span class="pill red">${esc(L.rateMoved)}</span>`:`<span class="pill gold">${esc(L.rateLocked)} ${b.lockedAt}</span>`}
+      </span></h3>
+      <div class="pbody" style="padding:0">${b.lines.length?`<table><thead><tr>
+        <th>${esc(L.item)}</th><th class="r">${esc(L.netWt)}</th><th>${esc(L.rate)} × ${esc(L.netWt)}</th>
+        <th class="r">${esc(L.amount)}</th><th></th></tr></thead><tbody>${lines}</tbody></table>`
+        :`<div class="pbody dim">${esc(L.noLines)}</div>`}</div>
+      <div style="padding:11px 15px;border-top:1px solid var(--rule);display:flex;gap:8px;align-items:center">
+        <input id="scanBox" placeholder="${esc(L.scanTag)}" style="flex:1;padding:7px 9px;border:1px solid var(--rule)"
+          onkeydown="if(event.key==='Enter')scanAdd(this.value)">
+        <button class="btn ghost" onclick="openAddItem()">${esc(L.addItem)}</button>
+      </div></div>
 
-      <div class="panel">
-        <h3>${esc(L.oldGold)}</h3>
-        <div class="pbody">
-          <p class="tiny dim" style="margin-top:0">${esc(L.oldGoldHelp)}</p>
-          ${S.bill.oldGold.length ? oldRows : `<div class="tiny dim">${esc(L.noOldGold)}</div>`}
-          <div style="margin-top:12px"><button class="btn ghost" onclick="openOldGold()">+ ${esc(L.addOldGold)}</button></div>
-        </div>
-      </div>
+      <div class="panel"><h3>${esc(L.oldGold)}</h3><div class="pbody">
+        <p class="tiny dim" style="margin-top:0">${esc(L.oldGoldHelp)}</p>
+        ${b.oldGold.length?oldRows:`<div class="tiny dim">${esc(L.noOldGold)}</div>`}
+        <div style="margin-top:11px"><button class="btn ghost" onclick="openOldGold()">${esc(L.addOldGold)}</button></div>
+      </div></div>
     </div>
 
     <div>
-      <div class="panel">
-        <h3>${esc(L.customer)}</h3>
-        <div class="pbody">
-          <label class="f"><span>${esc(L.selectCustomer)}</span>
-            <select onchange="S.bill.customer=this.value;renderView()">
-              <option value="">${esc(L.walkIn)}</option>
-              ${CUSTOMERS.map(c=>`<option value="${c.id}" ${S.bill.customer===c.id?"selected":""}>${esc(nameOf(c))}${c.id_on_file?" ✓":""}</option>`).join("")}
-            </select></label>
-          ${S.bill.customer && CUSTOMERS.find(c=>c.id===S.bill.customer)?.id_on_file
-            ? `<span class="pill green">${esc(L.idOnFile)}</span>` : ""}
-        </div>
-      </div>
+      <div class="panel"><h3>${esc(L.customer)}</h3><div class="pbody">
+        <label class="f"><span>${esc(L.selectCustomer)}</span>
+          <select onchange="S.bill.customer=this.value;renderView()">
+            <option value="">${esc(L.walkIn)}</option>
+            ${CUSTOMERS.map(c=>`<option value="${c.id}" ${b.customer===c.id?"selected":""}>${esc(nm(c))}${c.idOnFile?" ✓":""}</option>`).join("")}
+          </select></label>
+        ${b.customer&&CUSTOMERS.find(c=>c.id===b.customer)?.idOnFile?`<span class="pill green">${esc(L.cddOnFile)}</span>`:""}
+      </div></div>
 
-      <div class="panel">
-        <h3>${esc(L.netPayable)}</h3>
-        <div class="pbody">
-          <div class="formula">
-            <div>${esc(L.goldValue)} <b style="float:inline-end">${q(bt.gold)}</b></div>
-            <div>${esc(L.making)} <b style="float:inline-end">${q(bt.making)}</b></div>
-            ${bt.stones?`<div>${esc(L.stones)} <b style="float:inline-end">${q(bt.stones)}</b></div>`:""}
-            <div style="border-top:1px solid var(--rule);margin-top:6px;padding-top:6px">
-              ${esc(L.subtotal)} <b style="float:inline-end">${q(bt.sub)}</b></div>
-            ${bt.oldGoldCredit?`<div style="color:var(--oxblood)">${esc(L.lessOldGold)} <b style="float:inline-end">−${q(bt.oldGoldCredit)}</b></div>`:""}
-          </div>
-          <div class="metric" style="margin-top:10px;border-top:2px solid var(--velvet);padding-top:8px">
-            <div class="lab">${esc(L.netPayable)} · QAR</div>
-            <div class="val">${q(bt.net)}</div>
-          </div>
+      <div class="panel"><h3>${esc(L.netPayable)}</h3><div class="pbody">
+        <div class="formula">
+          <div>${esc(L.goldValue)} <b style="float:inline-end">${q(bt.gold)}</b></div>
+          <div>${esc(L.making)} <b style="float:inline-end">${q(bt.making)}</b></div>
+          ${bt.stones?`<div>${esc(L.stones)} <b style="float:inline-end">${q(bt.stones)}</b></div>`:""}
+          ${bt.discount?`<div style="color:var(--oxblood)">${esc(L.discount)} ${b.discPct}% <b style="float:inline-end">−${q(bt.discount)}</b></div>`:""}
+          <div style="border-top:1px solid var(--rule);margin-top:5px;padding-top:5px">${esc(L.subtotal)} <b style="float:inline-end">${q(bt.sub)}</b></div>
+          ${bt.oldGoldCredit?`<div style="color:var(--oxblood)">${esc(L.lessOldGold)} <b style="float:inline-end">−${q(bt.oldGoldCredit)}</b></div>`:""}
         </div>
-      </div>
+        <div class="metric" style="margin-top:9px;border-top:2px solid var(--velvet);padding-top:7px">
+          <div class="lab">${esc(L.netPayable)} · QAR</div><div class="val">${q(bt.net)}</div></div>
+      </div></div>
 
-      <div class="panel">
-        <h3>${esc(L.tender)}</h3>
-        <div class="pbody">
-          <label class="f"><span>${esc(L.cash)}</span>
-            <input class="num" type="number" min="0" step="100" value="${S.bill.tender.cash}"
-              oninput="S.bill.tender.cash=parseFloat(this.value)||0;renderView();focusBack('cash')" data-fk="cash"></label>
-          <div class="meter"><i class="${meterCls}" style="width:${pct}%"></i></div>
-          <div class="tiny ${cash>=AML_CASH_THRESHOLD?"":"dim"}" style="${cash>=AML_CASH_THRESHOLD?"color:var(--oxblood)":""}">
-            ${esc(L.cashSoFar)} ${q0(cash)} — ${q0(Math.round(pct))}% ${esc(L.ofThreshold)}
-          </div>
-          <div class="frow" style="margin-top:12px">
-            <label class="f"><span>${esc(L.card)}</span>
-              <input class="num" type="number" min="0" step="100" value="${S.bill.tender.card}"
-                oninput="S.bill.tender.card=parseFloat(this.value)||0;renderView();focusBack('card')" data-fk="card"></label>
-            <label class="f"><span>${esc(L.transfer)}</span>
-              <input class="num" type="number" min="0" step="100" value="${S.bill.tender.transfer}"
-                oninput="S.bill.tender.transfer=parseFloat(this.value)||0;renderView();focusBack('transfer')" data-fk="transfer"></label>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="btn gold" style="flex:1" onclick="completeSale()" ${S.bill.lines.length?"":"disabled"}>${esc(L.complete)}</button>
-            <button class="btn ghost" onclick="clearBill()">${esc(L.clearBill)}</button>
-          </div>
+      <div class="panel"><h3>${esc(L.discount)}<span class="side">${esc(L.discLimit)} ${limit}%</span></h3><div class="pbody">
+        <input class="num" type="number" min="0" max="100" step="1" value="${b.discPct}" data-fk="disc"
+          oninput="S.bill.discPct=Math.max(0,parseFloat(this.value)||0);S.bill.discApprovedBy='';renderView();focusBack('disc')"
+          style="width:100%;padding:7px 9px;border:1px solid var(--rule)">
+        ${needsApproval?`<div class="note red" style="margin-top:8px">${esc(L.discNeedsApproval)}
+          <div style="margin-top:7px"><button class="btn sm danger" onclick="openApproval()">${esc(L.approve)}</button></div></div>`:""}
+        ${b.discApprovedBy?`<div class="note green" style="margin-top:8px">${esc(L.approvedBy)} ${esc(userName(b.discApprovedBy))}</div>`:""}
+      </div></div>
+
+      <div class="panel"><h3>${esc(L.tender)}</h3><div class="pbody">
+        <label class="f"><span>${esc(L.cash)}</span><input class="num" type="number" min="0" step="100" value="${b.tender.cash}"
+          data-fk="cash" oninput="S.bill.tender.cash=parseFloat(this.value)||0;renderView();focusBack('cash')"></label>
+        <div class="meter"><i class="${mc}" style="width:${pct}%"></i></div>
+        <div class="tiny" style="${cash>=AML_CASH_THRESHOLD?"color:var(--oxblood)":"color:var(--slate-soft)"}">
+          ${esc(L.cashSoFar)} ${q0(cash)} — ${q0(Math.round(pct))}% ${esc(L.ofThreshold)}</div>
+        <div class="frow" style="margin-top:11px">
+          <label class="f"><span>${esc(L.card)}</span><input class="num" type="number" min="0" step="100" value="${b.tender.card}"
+            data-fk="card" oninput="S.bill.tender.card=parseFloat(this.value)||0;renderView();focusBack('card')"></label>
+          <label class="f"><span>${esc(L.transfer)}</span><input class="num" type="number" min="0" step="100" value="${b.tender.transfer}"
+            data-fk="transfer" oninput="S.bill.tender.transfer=parseFloat(this.value)||0;renderView();focusBack('transfer')"></label>
         </div>
-      </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn gold" style="flex:1" onclick="completeSale()" ${b.lines.length&&!needsApproval?"":"disabled"}>${esc(L.complete)}</button>
+          <button class="btn ghost" onclick="previewBill()" ${b.lines.length?"":"disabled"}>${esc(L.preview)}</button>
+          <button class="btn ghost" onclick="clearBill()">${esc(L.clearBill)}</button>
+        </div>
+        ${paid<bt.net-0.01&&b.lines.length?`<div class="tiny dim" style="margin-top:7px">${esc(L.tenderShort)}</div>`:""}
+      </div></div>
     </div>
   </div>`;
 }
-
-let _focusKey = null;
-function focusBack(k){ _focusKey = k; }
-
+let _fk=null; function focusBack(k){_fk=k}
+function branchPicker(){
+  const locked=myRole().branchLock;
+  return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <span class="tiny dim">${esc(t().branch)}</span>
+    <select onchange="S.branch=this.value;syncUrl();renderAll()" ${locked?"disabled":""}
+      style="padding:5px 9px;border:1px solid var(--rule);background:#fff">
+      ${BRANCHES.map(b=>`<option value="${b.id}" ${S.branch===b.id?"selected":""}>${esc(nm(b))}</option>`).join("")}
+    </select>
+    ${locked?`<span class="tiny dim">${esc(roleName(me().role))}</span>`:""}</div>`;
+}
 function openAddItem(){
-  const L = t();
-  const avail = STOCK.filter(s=>s.status==="in" && s.branch===S.branch && !S.bill.lines.includes(s.tag));
-  const rows = avail.map(it=>{
-    const p = priceLine(it, S.bill.lockedRates);
-    return `<div class="rowline">
-      <div class="grow">
-        <b>${esc(nameOf(it))}</b> <span class="pill grey">${S.lang==="ar"?"عيار "+it.k:it.k+"K"}</span>
-        <div class="tiny dim mono">${esc(it.tag)} · ${esc(L.netWt)} ${g(p.net)} g</div>
-      </div>
-      <div class="mono tiny r" style="margin-inline-end:8px">${q(p.total)}</div>
-      <button class="btn sm" onclick="addLine('${it.tag}')">+</button>
-    </div>`;
-  }).join("");
-  document.getElementById("modalHost").innerHTML = `
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="box">
-      <h3>${esc(L.modalAdd_h)} — ${esc(branchName(S.branch))}</h3>
-      <div class="mb">${rows || `<div class="dim tiny">${esc(L.noStock)}</div>`}</div>
-      <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button></div>
-    </div>
-  </div>`;
+  const L=t();
+  const avail=STOCK.filter(s=>s.status==="in"&&s.branch===S.branch&&!S.bill.lines.includes(s.tag));
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.modalAdd_h)} — ${esc(branchName(S.branch))}</h3>
+    <div class="mb">${avail.map(it=>{const p=priceLine(it,S.bill.lockedRates);
+      return `<div class="rowline"><div class="grow"><b>${esc(nm(it))}</b> <span class="pill grey">${esc(kLabel(it.k))}</span>
+      <div class="tiny dim mono">${esc(it.tag)} · ${esc(L.netWt)} ${g(p.net)} ${gUnit()}</div></div>
+      <div class="mono tiny" style="margin-inline-end:7px">${q(p.total)}</div>
+      <button class="btn sm" onclick="addLine('${it.tag}')">+</button></div>`}).join("")||`<div class="dim tiny">${esc(L.noStock)}</div>`}</div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button></div></div></div>`;
+}
+function scanAdd(v){
+  const tag=(v||"").trim().toUpperCase(); if(!tag) return;
+  const it=STOCK.find(s=>s.tag===tag&&s.status==="in"&&s.branch===S.branch);
+  if(!it) return toast(t().noStock,true);
+  if(S.bill.lines.includes(tag)) return;
+  S.bill.lines.push(tag); renderAll();
 }
 function addLine(tag){ S.bill.lines.push(tag); closeModal(); renderAll(); }
-function removeLine(tag){ S.bill.lines = S.bill.lines.filter(x=>x!==tag); renderAll(); }
+function removeLine(tag){ S.bill.lines=S.bill.lines.filter(x=>x!==tag); renderAll(); }
+function clearBill(){ S.bill=newBill(); renderAll(); }
 
+function openApproval(){
+  const L=t();
+  const approvers=USERS.filter(u=>ROLES[u.role].canApprove&&ROLES[u.role].maxDiscountPct>=S.bill.discPct);
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.approve)}</h3><div class="mb">
+    <p class="tiny dim" style="margin-top:0">${esc(L.discNeedsApproval)} — ${S.bill.discPct}%</p>
+    <label class="f"><span>${esc(L.approverPin)}</span><select id="apUser">
+      ${approvers.map(u=>`<option value="${u.id}">${esc(nm(u))} · ${esc(roleName(u.role))}</option>`).join("")}
+    </select></label></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="grantApproval()">${esc(L.grant)}</button></div></div></div>`;
+}
+function grantApproval(){
+  const u=document.getElementById("apUser").value;
+  S.bill.discApprovedBy=u;
+  log("discount", S.bill.discPct+"% · "+userName(u));
+  closeModal(); renderAll();
+}
 function openOldGold(){
-  const L = t();
-  document.getElementById("modalHost").innerHTML = `
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="box">
-      <h3>${esc(L.modalOld_h)}</h3>
-      <div class="mb">
-        <div class="frow">
-          <label class="f"><span>${esc(L.weightIn)} (g)</span>
-            <input id="ogWt" class="num" type="number" step="0.001" value="18.400" oninput="previewOld()"></label>
-          <label class="f"><span>${esc(L.assessedKarat)}</span>
-            <select id="ogK" onchange="previewOld()">
-              <option value="22">${S.lang==="ar"?"عيار 22":"22K"}</option>
-              <option value="21" selected>${S.lang==="ar"?"عيار 21":"21K"}</option>
-              <option value="18">${S.lang==="ar"?"عيار 18":"18K"}</option>
-              <option value="24">${S.lang==="ar"?"عيار 24":"24K"}</option>
-            </select></label>
-        </div>
-        <div class="frow">
-          <label class="f"><span>${esc(L.testMethod)}</span>
-            <select id="ogM">
-              <option value="${esc(L.xrf)}">${esc(L.xrf)}</option>
-              <option value="${esc(L.touchstone)}">${esc(L.touchstone)}</option>
-              <option value="${esc(L.declared)}">${esc(L.declared)}</option>
-            </select></label>
-          <label class="f"><span>${esc(L.deduction)} (%)</span>
-            <input id="ogD" class="num" type="number" step="0.5" value="3" oninput="previewOld()"></label>
-        </div>
-        <div class="note"><div id="ogPreview" class="formula"></div></div>
-      </div>
-      <div class="mf">
-        <button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
-        <button class="btn gold" onclick="addOldGold()">${esc(L.addOldGold)}</button>
-      </div>
+  const L=t();
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.modalOld_h)}</h3><div class="mb">
+    <div class="frow">
+      <label class="f"><span>${esc(L.weightIn)} (${gUnit()})</span><input id="ogWt" class="num" type="number" step="0.001" value="18.400" oninput="previewOld()"></label>
+      <label class="f"><span>${esc(L.assessedKarat)}</span><select id="ogK" onchange="previewOld()">
+        ${[22,21,18,24].map(k=>`<option value="${k}" ${k===21?"selected":""}>${esc(kLabel(k))}</option>`).join("")}</select></label>
     </div>
-  </div>`;
+    <div class="frow">
+      <label class="f"><span>${esc(L.testMethod)}</span><select id="ogM">
+        <option>${esc(L.xrf)}</option><option>${esc(L.touchstone)}</option><option>${esc(L.declared)}</option></select></label>
+      <label class="f"><span>${esc(L.deduction)} (%)</span><input id="ogD" class="num" type="number" step="0.5" value="3" oninput="previewOld()"></label>
+    </div>
+    <div class="note"><div id="ogPreview" class="formula"></div></div></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="addOldGold()">${esc(L.addOldGold)}</button></div></div></div>`;
   previewOld();
 }
 function oldGoldCalc(){
-  const wt = parseFloat(document.getElementById("ogWt").value)||0;
-  const k  = parseInt(document.getElementById("ogK").value,10);
-  const ded= parseFloat(document.getElementById("ogD").value)||0;
-  const rate = S.bill.lockedRates[k].buy;
-  const credit = round2(wt * rate * (1 - ded/100));
-  return {wt,k,ded,rate,credit};
+  const wt=parseFloat(document.getElementById("ogWt").value)||0;
+  const k=parseInt(document.getElementById("ogK").value,10);
+  const ded=parseFloat(document.getElementById("ogD").value)||0;
+  const rate=S.bill.lockedRates[k].buy;
+  return {wt,k,ded,rate,credit:round2(wt*rate*(1-ded/100))};
 }
 function previewOld(){
-  const c = oldGoldCalc();
-  const L = t();
-  document.getElementById("ogPreview").innerHTML =
-    `${g(c.wt)} g × ${q(c.rate)} <span class="dim">(${L.buy} ${S.lang==="ar"?"عيار "+c.k:c.k+"K"})</span> `
-    + `− ${c.ded}% = <b>QAR ${q(c.credit)}</b><br>`
-    + `<span class="dim">${esc(t().fineWt)} ${g(fine(c.wt,c.k))} g</span>`;
+  const c=oldGoldCalc();
+  document.getElementById("ogPreview").innerHTML=
+    `${g(c.wt)} ${gUnit()} × ${q(c.rate)} <span class="dim">(${esc(t().buy)} ${esc(kLabel(c.k))})</span> − ${c.ded}% = <b>QAR ${q(c.credit)}</b><br>
+     <span class="dim">${esc(t().fineWt)} ${g(fine(c.wt,c.k))} ${gUnit()}</span>`;
 }
 function addOldGold(){
-  const c = oldGoldCalc();
-  c.method = document.getElementById("ogM").value;
-  S.bill.oldGold.push(c);
-  closeModal(); renderAll();
+  const c=oldGoldCalc(); c.method=document.getElementById("ogM").value;
+  S.bill.oldGold.push(c); closeModal(); renderAll();
 }
 function removeOldGold(i){ S.bill.oldGold.splice(i,1); renderAll(); }
-function clearBill(){
-  S.bill = { lines:[], oldGold:[], customer:"", tender:{cash:0,card:0,transfer:0},
-             lockedRates: JSON.parse(JSON.stringify(S.rates)), lockedAt: S.ratesSetAt };
-  renderAll();
-}
 
 function completeSale(){
-  const L = t();
-  if (S.bill.tender.cash >= AML_CASH_THRESHOLD){
-    const c = CUSTOMERS.find(x=>x.id===S.bill.customer);
-    document.getElementById("modalHost").innerHTML = `
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="box">
-        <h3>${esc(L.amlGate)}</h3>
-        <div class="mb">
-          <div class="note red" style="margin-bottom:14px">${esc(L.amlGateBody)}</div>
-          <label class="f"><span>${esc(L.fullName)}</span>
-            <input id="idName" value="${c?esc(nameOf(c)):""}"></label>
-          <div class="frow">
-            <label class="f"><span>${esc(L.idType)}</span>
-              <select id="idType">
-                <option value="qid">${esc(L.qid)}</option>
-                <option value="passport">${esc(L.passport)}</option>
-                <option value="cr">${esc(L.cr)}</option>
-              </select></label>
-            <label class="f"><span>${esc(L.idNumber)}</span><input id="idNum" class="num" placeholder="284••••••••"></label>
-          </div>
-          <label class="f"><span>${esc(L.expiry)}</span><input id="idExp" type="date" value="2029-03-11"></label>
-        </div>
-        <div class="mf">
-          <button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
-          <button class="btn gold" onclick="recordCddAndFinish()">${esc(L.recordAndContinue)}</button>
-        </div>
+  const L=t(), bt=billTotals(S.bill);
+  if (S.bill.tender.cash>=AML_CASH_THRESHOLD){
+    const c=CUSTOMERS.find(x=>x.id===S.bill.customer);
+    document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+      <h3>${esc(L.amlGate)}</h3><div class="mb">
+      <div class="note red" style="margin-bottom:13px">${esc(L.amlGateBody)}</div>
+      <label class="f"><span>${esc(L.fullName)}</span><input id="idName" value="${c?esc(nm(c)):""}"></label>
+      <div class="frow">
+        <label class="f"><span>${esc(L.idType)}</span><select id="idType">
+          <option value="qid">${esc(L.qid)}</option><option value="passport">${esc(L.passport)}</option>
+          <option value="cr">${esc(L.cr)}</option></select></label>
+        <label class="f"><span>${esc(L.idNumber)}</span><input id="idNum" class="num" placeholder="284••••••••"></label>
       </div>
-    </div>`;
+      <label class="f"><span>${esc(L.expiry)}</span><input id="idExp" type="date" value="2029-03-11"></label></div>
+      <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+      <button class="btn gold" onclick="recordCddAndFinish()">${esc(L.recordAndContinue)}</button></div></div></div>`;
     return;
   }
   finishSale(false);
 }
 function recordCddAndFinish(){
-  const name = document.getElementById("idName").value.trim();
-  const num  = document.getElementById("idNum").value.trim();
-  if (!name || !num){ toast(t().idNumber); return; }
-  CDD.unshift({
-    cust: S.bill.customer || "walkin",
-    custName: name,
-    idType: document.getElementById("idType").value,
-    num, expiry: document.getElementById("idExp").value,
-    by:"Counter 2", date:"2026-08-31"
-  });
-  ALERTS.unshift({ id:"a"+Date.now(), type:"highvalue", cust:S.bill.customer||"", amount:S.bill.tender.cash, date:"2026-08-31", status:"cleared" });
-  closeModal();
-  finishSale(true);
+  const name=document.getElementById("idName").value.trim();
+  const num=document.getElementById("idNum").value.trim();
+  if(!name||!num) return toast(t().idNumber,true);
+  CDD.unshift({cust:S.bill.customer||"walkin", custName:name, idType:document.getElementById("idType").value,
+    num, expiry:document.getElementById("idExp").value, by:S.user, date:TODAY});
+  ALERTS.unshift({id:"a"+Date.now(), type:"highvalue", cust:S.bill.customer||"", amount:S.bill.tender.cash, date:TODAY, status:"cleared"});
+  closeModal(); finishSale(true);
 }
 function finishSale(withCdd){
-  S.bill.lines.forEach(tag=>{ const it=STOCK.find(s=>s.tag===tag); if(it) it.status="sold"; });
-  S.bill.oldGold.forEach((o,i)=>{
-    STOCK.push({ tag:"SC-"+String(9200+i+STOCK.length), en:"Scrap lot", ar:"دفعة كسر",
-      k:o.k, gross:o.wt, stone:0, branch:S.branch, mk:"g", mkv:0, stoneVal:0, status:"scrap" });
+  const b=S.bill, bt=billTotals(b), no=nextInvoiceNo(S.branch);
+  SALES.unshift({no, date:TODAY, branch:S.branch, cust:b.customer, by:S.user,
+    gold:bt.gold, making:bt.making-bt.discount, stones:bt.stones, oldGold:bt.oldGoldCredit,
+    net:bt.net, cash:b.tender.cash, card:b.tender.card, transfer:b.tender.transfer,
+    cdd:!!withCdd, lines:b.lines.map(tag=>({tag})), oldGoldRows:b.oldGold.slice(), void:false,
+    rates:JSON.parse(JSON.stringify(b.lockedRates))});
+  b.lines.forEach(tag=>{
+    const it=STOCK.find(s=>s.tag===tag); if(!it) return;
+    it.status="sold"; METAL[it.branch].owned-=fine(netOf(it),it.k);
   });
-  METAL[S.branch].scrap += S.bill.oldGold.reduce((a,o)=>a+fine(o.wt,o.k),0);
+  b.oldGold.forEach((o,i)=>{
+    STOCK.push({tag:"SC-"+(9200+STOCK.length+i), en:"Scrap lot", ar:"دفعة كسر", k:o.k, gross:o.wt, stone:0,
+      branch:S.branch, mk:"g", mkv:0, stoneVal:0, status:"scrap"});
+    METAL[S.branch].scrap+=fine(o.wt,o.k);
+  });
+  if (withCdd) log("cdd", no+" · ID recorded");
+  log("sale", no+" · QAR "+q(bt.net));
   clearBill();
-  toast(withCdd ? t().saleDoneAml : t().saleDone);
+  toast(withCdd?t().saleDoneAml:t().saleDone);
+}
+function previewBill(){
+  const bt=billTotals(S.bill);
+  showInvoice({no:nextInvoiceNo(S.branch), date:TODAY, branch:S.branch, cust:S.bill.customer, by:S.user,
+    gold:bt.gold, making:bt.making-bt.discount, stones:bt.stones, oldGold:bt.oldGoldCredit, net:bt.net,
+    cash:S.bill.tender.cash, card:S.bill.tender.card, transfer:S.bill.tender.transfer,
+    cdd:S.bill.tender.cash>=AML_CASH_THRESHOLD, lines:S.bill.lines.map(tag=>({tag})),
+    oldGoldRows:S.bill.oldGold.slice(), rates:S.bill.lockedRates, void:false});
 }
 
-/* ---------------- view: stock ---------------- */
-function viewStock(){
-  const L = t();
-  let list = STOCK.filter(s=>s.status!=="sold");
-  if (S.branch) list = list.filter(s=>s.branch===S.branch);
-  if (S.stockFilter.karat) list = list.filter(s=>String(s.k)===S.stockFilter.karat);
-  if (S.stockFilter.q){
-    const qq = S.stockFilter.q.toLowerCase();
-    list = list.filter(s=> s.tag.toLowerCase().includes(qq) || s.en.toLowerCase().includes(qq) || s.ar.includes(S.stockFilter.q));
-  }
-  const totNet  = list.reduce((a,s)=>a+netOf(s),0);
-  const totFine = list.reduce((a,s)=>a+fine(netOf(s),s.k),0);
-  const value   = list.reduce((a,s)=>a+netOf(s)*S.rates[s.k].sell,0);
-
-  const rows = list.map(s=>{
-    const p = priceLine(s, S.rates);
-    return `<tr>
-      <td class="mono tiny">${esc(s.tag)}</td>
-      <td><b>${esc(nameOf(s))}</b>
-        ${s.status==="scrap"?`<span class="pill red">${esc(L.scrapPill)}</span>`:""}
-      </td>
-      <td class="mono">${S.lang==="ar"?"عيار "+s.k:s.k+"K"}</td>
-      <td class="r mono">${g(s.gross)}</td>
-      <td class="r mono">${s.stone?g(s.stone):"—"}</td>
-      <td class="r mono"><b>${g(p.net)}</b></td>
-      <td class="r mono dim">${g(fine(p.net,s.k))}</td>
-      <td class="r mono">${q0(p.total)}</td>
-      <td class="r">
-        <select class="tiny" onchange="moveStock('${s.tag}',this.value)" style="padding:3px;border:1px solid var(--rule)">
-          <option value="">${esc(L.transfer)}…</option>
-          ${BRANCHES.filter(b=>b.id!==s.branch).map(b=>`<option value="${b.id}">${esc(nameOf(b))}</option>`).join("")}
-        </select>
-      </td>
-    </tr>`;
+/* ================= invoice ================= */
+function showInvoice(s){
+  const L=t(), br=BRANCHES.find(b=>b.id===s.branch), rates=s.rates||S.rates;
+  const rows=(s.lines||[]).map(l=>{
+    const it=STOCK.find(x=>x.tag===l.tag); if(!it) return "";
+    const p=priceLine(it,rates);
+    return `<tr><td class="mono">${esc(it.tag)}</td><td>${esc(nm(it))}</td><td class="mono">${esc(kLabel(it.k))}</td>
+      <td class="r mono">${g(it.gross)}</td><td class="r mono">${it.stone?g(it.stone):"—"}</td>
+      <td class="r mono">${g(p.net)}</td><td class="r mono">${q(p.rate)}</td>
+      <td class="r mono">${q(p.making)}</td><td class="r mono">${q(p.total)}</td></tr>`;
   }).join("");
+  const oldRows=(s.oldGoldRows||[]).map(o=>`<tr><td colspan="5" class="dim">${esc(L.oldGold)} · ${esc(o.method)} · ${esc(L.deduction)} ${o.ded}%</td>
+    <td class="r mono">${g(o.wt)}</td><td class="r mono">${q(o.rate)}</td><td></td>
+    <td class="r mono" style="color:var(--oxblood)">−${q(o.credit)}</td></tr>`).join("");
 
-  return `
-  <div class="vhead">
-    <h2>${esc(L.v_stock_h)}</h2>
-    <p>${esc(L.v_stock_p)}</p>
-  </div>
-
-  <div class="grid3">
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.pieceCount)}</div><div class="val">${q0(list.length)}</div>
-      <div class="sub">${esc(branchName(S.branch))}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.totalNet)} / ${esc(L.totalFine)}</div>
-      <div class="val">${g(totNet)}</div>
-      <div class="sub">${g(totFine)} ${esc(L.fineGrams)}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.stockValue)}</div><div class="val">${q0(value)}</div>
-      <div class="sub">QAR · ${esc(L.asOf)} ${S.ratesSetAt}</div></div></div></div>
-  </div>
-
-  <div class="panel">
-    <h3>${esc(L.nav.stock)}
-      <span class="side" style="display:flex;gap:8px">
-        <select onchange="S.stockFilter.karat=this.value;renderView()" style="padding:3px 6px;border:1px solid var(--rule)">
-          <option value="">${esc(L.allKarats)}</option>
-          ${[24,22,21,18].map(k=>`<option value="${k}" ${S.stockFilter.karat==String(k)?"selected":""}>${S.lang==="ar"?"عيار "+k:k+"K"}</option>`).join("")}
-        </select>
-        <input placeholder="${esc(L.search)}" value="${esc(S.stockFilter.q)}"
-          oninput="S.stockFilter.q=this.value;renderView();focusBack('q')" data-fk="q"
-          style="padding:3px 6px;border:1px solid var(--rule);width:170px">
-      </span>
-    </h3>
-    <div class="pbody" style="padding:0;overflow-x:auto">
-      <table>
-        <thead><tr>
-          <th>${esc(L.tag)}</th><th>${esc(L.item)}</th><th>${esc(L.karat)}</th>
-          <th class="r">${esc(L.grossWt)}</th><th class="r">${esc(L.stoneWt)}</th>
-          <th class="r">${esc(L.netWt)}</th><th class="r">${esc(L.fineWt)}</th>
-          <th class="r">${esc(L.amount)}</th><th></th>
-        </tr></thead>
-        <tbody>${rows || `<tr><td colspan="9" class="dim">${esc(L.noStock)}</td></tr>`}</tbody>
-      </table>
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box wide">
+  <h3>${esc(L.invTitle)} — ${esc(s.no)}</h3>
+  <div class="mb" style="padding:0"><div class="inv">
+    <div class="ih">
+      <div><h1>${esc(L.brand)}</h1><div class="co">${esc(branchName(s.branch))} · ${esc(br.cr)}<br>
+        ${S.lang==="ar"?"الدوحة، دولة قطر":"Doha, State of Qatar"}</div></div>
+      <div class="rt"><b>${esc(L.invTitle)}</b><br>
+        <span class="dim">${esc(L.invNoLabel)}</span> ${esc(s.no)}<br>
+        <span class="dim">${esc(L.invDate)}</span> ${esc(s.date)}<br>
+        <span class="dim">${esc(L.invServedBy)}</span> ${esc(userName(s.by))}</div>
     </div>
-  </div>`;
+    <div class="meta">
+      <div><span>${esc(L.invTo)}</span><br><b>${esc(s.cust?custName(s.cust):L.walkIn)}</b>
+        ${s.cust?`<br>${esc(CUSTOMERS.find(c=>c.id===s.cust).phone)}`:""}</div>
+      <div style="text-align:end"><span>${esc(L.boardTitle)}</span><br>
+        ${[24,22,21,18].map(k=>esc(kLabel(k))+" "+q(rates[k].sell)).join(" · ")}</div>
+    </div>
+    <table><thead><tr><th>${esc(L.tag)}</th><th>${esc(L.invDesc)}</th><th>${esc(L.karat)}</th>
+      <th class="r">${esc(L.grossWt)}</th><th class="r">${esc(L.stoneWt)}</th><th class="r">${esc(L.netWt)}</th>
+      <th class="r">${esc(L.rate)}</th><th class="r">${esc(L.making)}</th><th class="r">${esc(L.amount)}</th></tr></thead>
+      <tbody>${rows}${oldRows}</tbody></table>
+    <div class="tot">
+      <div class="l"><span>${esc(L.goldValue)}</span><span class="mono">${q(s.gold)}</span></div>
+      <div class="l"><span>${esc(L.making)}</span><span class="mono">${q(s.making)}</span></div>
+      ${s.stones?`<div class="l"><span>${esc(L.stones)}</span><span class="mono">${q(s.stones)}</span></div>`:""}
+      ${s.oldGold?`<div class="l" style="color:var(--oxblood)"><span>${esc(L.lessOldGold)}</span><span class="mono">−${q(s.oldGold)}</span></div>`:""}
+      <div class="l big"><span>${esc(L.netPayable)}</span><span class="mono">QAR ${q(s.net)}</span></div>
+      <div class="l tiny dim"><span>${esc(L.cash)} / ${esc(L.card)} / ${esc(L.transfer)}</span>
+        <span class="mono">${q0(s.cash)} / ${q0(s.card)} / ${q0(s.transfer)}</span></div>
+    </div>
+    <div class="decl">${esc(L.invHallmark)}. ${esc(L.invDeclare)}<br>${esc(L.invNoTax)}
+      ${s.cdd?`<br><b>${esc(L.invAml)}</b>`:""}</div>
+    <div class="sig"><div>${esc(L.invCustomer)}</div><div>${esc(L.invAuthorised)}</div></div>
+  </div></div>
+  <div class="mf noprint"><button class="btn ghost" onclick="closeModal()">${esc(L.close)}</button>
+    <button class="btn gold" onclick="window.print()">${esc(L.reprint)}</button></div>
+  </div></div>`;
 }
-function moveStock(tag, to){
-  if(!to) return;
-  const it = STOCK.find(s=>s.tag===tag); if(!it) return;
-  const f = fine(netOf(it), it.k);
-  METAL[it.branch].owned -= f; METAL[to].owned += f;
-  it.branch = to;
-  renderAll();
-  toast(t().transferred + " → " + branchName(to));
+
+/* ================= register ================= */
+function viewRegister(){
+  const L=t();
+  const list=SALES.filter(s=>!myRole().branchLock||s.branch===S.branch);
+  return `<div class="vhead"><h2>${esc(L.v_reg_h)}</h2><p>${esc(L.v_reg_p)}</p></div>
+  ${branchPicker()}
+  <div class="panel"><h3>${esc(L.nav.register)}<span class="side">${q0(list.length)}</span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>${esc(L.invNo)}</th><th>${esc(L.date)}</th><th>${esc(L.branch)}</th><th>${esc(L.customerCol)}</th>
+      <th>${esc(L.soldBy)}</th><th class="r">${esc(L.netPayable)}</th><th class="r">${esc(L.cash)}</th>
+      <th>${esc(L.statusCol)}</th><th></th></tr></thead>
+    <tbody>${list.map(s=>`<tr class="${s.void?"":"clickable"}" ${s.void?"":`onclick="showInvoiceByNo('${s.no}')"`}>
+      <td class="mono tiny">${esc(s.no)}</td><td class="mono tiny">${esc(s.date)}</td>
+      <td class="tiny">${esc(branchName(s.branch))}</td><td>${esc(s.cust?custName(s.cust):L.walkIn)}</td>
+      <td class="tiny dim">${esc(userName(s.by))}</td><td class="r mono">${q(s.net)}</td>
+      <td class="r mono ${s.cash>=AML_CASH_THRESHOLD?"":"dim"}">${q0(s.cash)}</td>
+      <td>${s.void?`<span class="pill red">${esc(L.voided)}</span>`
+        :s.cdd?`<span class="pill green">${esc(L.cddOnFile)}</span>`:`<span class="pill grey">—</span>`}</td>
+      <td class="r" onclick="event.stopPropagation()">
+        ${!s.void&&can("canVoid")?`<button class="btn ghost sm" onclick="voidSale('${s.no}')">${esc(L.voidSale)}</button>`:""}</td>
+    </tr>`).join("")}</tbody></table></div></div>`;
+}
+function showInvoiceByNo(no){ const s=SALES.find(x=>x.no===no); if(s) showInvoice(s); }
+function voidSale(no){
+  if(!can("canVoid")) return toast(t().noVoidRight,true);
+  const s=SALES.find(x=>x.no===no); if(!s) return;
+  s.void=true; log("void", no);
+  renderAll(); toast(t().voidedOk);
 }
 
-/* ---------------- view: metal ---------------- */
-function viewMetal(){
-  const L = t();
-  const rate24 = S.rates[24].sell;
-  const rows = BRANCHES.map(b=>{
-    const m = METAL[b.id];
-    const net = m.owned + m.scrap - m.owed;
-    return `<tr>
-      <td><b>${esc(nameOf(b))}</b></td>
-      <td class="r mono">${g(m.owned)}</td>
-      <td class="r mono dim">${g(m.consigned)}</td>
-      <td class="r mono">${g(m.scrap)}</td>
-      <td class="r mono" style="color:var(--oxblood)">−${g(m.owed)}</td>
-      <td class="r mono"><b>${net>=0?"":"−"}${g(Math.abs(net))}</b></td>
-      <td class="r mono dim">${q0(net*rate24)}</td>
-    </tr>`;
-  }).join("");
+/* ================= stock ================= */
+function viewStock(){
+  const L=t();
+  let list=STOCK.filter(s=>s.status!=="sold"&&s.branch===S.branch);
+  if(S.stockFilter.karat) list=list.filter(s=>String(s.k)===S.stockFilter.karat);
+  if(S.stockFilter.q){
+    const qq=S.stockFilter.q.toLowerCase();
+    list=list.filter(s=>s.tag.toLowerCase().includes(qq)||s.en.toLowerCase().includes(qq)||s.ar.includes(S.stockFilter.q));
+  }
+  const totNet=list.reduce((a,s)=>a+netOf(s),0);
+  const totFine=list.reduce((a,s)=>a+fine(netOf(s),s.k),0);
+  const value=list.reduce((a,s)=>a+netOf(s)*S.rates[s.k].sell,0);
 
-  const tot = Object.values(METAL).reduce((a,m)=>({
-    owned:a.owned+m.owned, consigned:a.consigned+m.consigned, scrap:a.scrap+m.scrap, owed:a.owed+m.owed
-  }),{owned:0,consigned:0,scrap:0,owed:0});
-  const netTot = tot.owned + tot.scrap - tot.owed;
-
-  return `
-  <div class="vhead">
-    <h2>${esc(L.v_metal_h)}</h2>
-    <p>${esc(L.v_metal_p)}</p>
-  </div>
-
+  return `<div class="vhead"><h2>${esc(L.v_stock_h)}</h2><p>${esc(L.v_stock_p)}</p></div>
+  ${branchPicker()}
   <div class="grid3">
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.ownedStock)} + ${esc(L.scrapHeld)}</div>
-      <div class="val">${g(tot.owned+tot.scrap)}</div>
-      <div class="sub">${esc(L.fineGrams)}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.supplierOwed)}</div>
-      <div class="val neg">${g(tot.owed)}</div>
-      <div class="sub">${esc(L.fineGrams)} · ${esc(L.consigned)} ${g(tot.consigned)}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.netPosition)}</div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.pieceCount)}</div>
+      <div class="val">${q0(list.length)}</div><div class="sub">${esc(branchName(S.branch))}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.totalNet)} / ${esc(L.totalFine)}</div>
+      <div class="val">${g(totNet)}</div><div class="sub">${g(totFine)} ${esc(L.fineGrams)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.stockValue)}</div>
+      <div class="val">${q0(value)}</div><div class="sub">QAR · ${esc(L.asOf)} ${S.ratesSetAt}</div></div></div></div>
+  </div>
+  <div class="panel"><h3>${esc(L.nav.stock)}<span class="side">
+    <select onchange="S.stockFilter.karat=this.value;renderView()" style="padding:3px 6px;border:1px solid var(--rule)">
+      <option value="">${esc(L.allKarats)}</option>
+      ${[24,22,21,18].map(k=>`<option value="${k}" ${S.stockFilter.karat==String(k)?"selected":""}>${esc(kLabel(k))}</option>`).join("")}
+    </select>
+    <input placeholder="${esc(L.search)}" value="${esc(S.stockFilter.q)}" data-fk="q"
+      oninput="S.stockFilter.q=this.value;renderView();focusBack('q')" style="padding:3px 6px;border:1px solid var(--rule);width:160px">
+  </span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>${esc(L.tag)}</th><th>${esc(L.item)}</th><th>${esc(L.karat)}</th>
+      <th class="r">${esc(L.grossWt)}</th><th class="r">${esc(L.stoneWt)}</th><th class="r">${esc(L.netWt)}</th>
+      <th class="r">${esc(L.fineWt)}</th><th class="r">${esc(L.amount)}</th><th></th></tr></thead>
+    <tbody>${list.map(s=>{const p=priceLine(s,S.rates);return `<tr>
+      <td class="mono tiny">${esc(s.tag)}</td>
+      <td><b>${esc(nm(s))}</b>${s.status==="scrap"?` <span class="pill red">${esc(L.scrapPill)}</span>`:""}</td>
+      <td class="mono">${esc(kLabel(s.k))}</td><td class="r mono">${g(s.gross)}</td>
+      <td class="r mono">${s.stone?g(s.stone):"—"}</td><td class="r mono"><b>${g(p.net)}</b></td>
+      <td class="r mono dim">${g(fine(p.net,s.k))}</td><td class="r mono">${q0(p.total)}</td>
+      <td class="r"><select onchange="moveStock('${s.tag}',this.value)" style="padding:2px;border:1px solid var(--rule);font-size:11.5px">
+        <option value="">${esc(L.transfer)}…</option>
+        ${BRANCHES.filter(b=>b.id!==s.branch).map(b=>`<option value="${b.id}">${esc(nm(b))}</option>`).join("")}</select></td>
+    </tr>`}).join("")||`<tr><td colspan="9" class="dim">${esc(L.noStock)}</td></tr>`}</tbody>
+  </table></div></div>`;
+}
+function moveStock(tag,to){
+  if(!to) return;
+  const it=STOCK.find(s=>s.tag===tag); if(!it) return;
+  const f=fine(netOf(it),it.k);
+  METAL[it.branch].owned-=f; METAL[to].owned+=f;
+  log("transfer", tag+" "+branchName(it.branch)+" → "+branchName(to));
+  it.branch=to; renderAll(); toast(t().transferred+" → "+branchName(to));
+}
+
+/* ================= workshop ================= */
+function viewWorkshop(){
+  const L=t();
+  const list=JOBS.filter(j=>!myRole().branchLock||j.branch===S.branch);
+  const out=list.filter(j=>j.status==="out");
+  const outFine=out.reduce((a,j)=>a+fine(j.issued,j.k),0);
+  return `<div class="vhead"><h2>${esc(L.v_work_h)}</h2><p>${esc(L.v_work_p)}</p></div>
+  ${branchPicker()}
+  <div class="grid3">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.outAtWorkshop)}</div>
+      <div class="val">${q0(out.length)}</div><div class="sub">${esc(L.jobId)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.issuedWt)}</div>
+      <div class="val">${g(out.reduce((a,j)=>a+j.issued,0))}</div><div class="sub">${gUnit()}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.fineWt)}</div>
+      <div class="val">${g(outFine)}</div><div class="sub">${esc(L.fineGrams)}</div></div></div></div>
+  </div>
+  <div class="panel"><h3>${esc(L.nav.workshop)}<span class="side">
+    <button class="btn sm ghost" onclick="openNewJob()">${esc(L.newJob)}</button></span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>${esc(L.jobId)}</th><th>${esc(L.karigar)}</th><th>${esc(L.description)}</th><th>${esc(L.karat)}</th>
+      <th class="r">${esc(L.issuedWt)}</th><th class="r">${esc(L.expectedWt)}</th><th class="r">${esc(L.receivedWt)}</th>
+      <th class="r">${esc(L.variance)}</th><th>${esc(L.statusCol)}</th><th></th></tr></thead>
+    <tbody>${list.map(j=>{
+      const v=jobVariance(j);
+      return `<tr><td class="mono tiny">${esc(j.id)}</td><td>${esc(karName(j.karigar))}</td>
+      <td class="tiny">${esc(S.lang==="ar"?j.desc_ar:j.desc_en)}<div class="tiny dim">${esc(j.date)}</div></td>
+      <td class="mono">${esc(kLabel(j.k))}</td><td class="r mono">${g(j.issued)}</td>
+      <td class="r mono dim">${g(j.expected)} <span class="tiny">(${j.tol}%)</span></td>
+      <td class="r mono">${j.received?g(j.received):"—"}</td>
+      <td class="r mono">${v?`<span style="color:${v.breach?"var(--oxblood)":"var(--ok)"}">${g(v.shortfall)}</span>`:"—"}</td>
+      <td>${j.status==="out"?`<span class="pill gold">${esc(L.statusOut)}</span>`
+        :v&&v.breach?`<span class="pill red">${esc(L.overTol)}</span>`:`<span class="pill green">${esc(L.withinTol)}</span>`}</td>
+      <td class="r">${j.status==="out"?`<button class="btn ghost sm" onclick="openReceiveJob('${j.id}')">${esc(L.receiveJob)}</button>`:""}</td>
+    </tr>`}).join("")}</tbody></table></div></div>
+  ${list.some(j=>{const v=jobVariance(j);return v&&v.breach})?`<div class="note red">${esc(L.jobBreach)}</div>`:""}`;
+}
+function openNewJob(){
+  const L=t();
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.newJob)}</h3><div class="mb">
+    <label class="f"><span>${esc(L.karigar)}</span><select id="njK">
+      ${KARIGARS.map(k=>`<option value="${k.id}">${esc(nm(k))} · ${esc(L.tolerance)} ${k.tol}%</option>`).join("")}</select></label>
+    <label class="f"><span>${esc(L.description)}</span><input id="njD" value="${S.lang==="ar"?"طلب جديد":"New order"}"></label>
+    <div class="frow">
+      <label class="f"><span>${esc(L.issuedWt)} (${gUnit()})</span><input id="njW" class="num" type="number" step="0.001" value="120.000"></label>
+      <label class="f"><span>${esc(L.karat)}</span><select id="njKar">
+        ${[22,21,18,24].map(k=>`<option value="${k}">${esc(kLabel(k))}</option>`).join("")}</select></label>
+    </div></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="createJob()">${esc(L.newJob)}</button></div></div></div>`;
+}
+function createJob(){
+  const kid=document.getElementById("njK").value;
+  const kar=KARIGARS.find(k=>k.id===kid);
+  const w=parseFloat(document.getElementById("njW").value)||0;
+  const k=parseInt(document.getElementById("njKar").value,10);
+  const id="J-"+String(413+JOBS.length);
+  JOBS.unshift({id, karigar:kid, branch:S.branch, issued:round3(w), k, expected:round3(w*(1-kar.tol/100)),
+    tol:kar.tol, received:0, status:"out", desc_en:document.getElementById("njD").value,
+    desc_ar:document.getElementById("njD").value, date:TODAY});
+  METAL[S.branch].owned-=fine(w,k); METAL[S.branch].atKarigar+=fine(w,k);
+  log("job", id+" · "+g(w)+" g → "+karName(kid));
+  closeModal(); renderAll(); toast(t().jobIssued);
+}
+function openReceiveJob(id){
+  const L=t(), j=JOBS.find(x=>x.id===id);
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.receiveJob)} — ${esc(j.id)}</h3><div class="mb">
+    <div class="formula" style="margin-bottom:11px">
+      ${esc(L.issuedWt)} <b>${g(j.issued)}</b> ${gUnit()}<br>
+      ${esc(L.expectedWt)} <b>${g(j.expected)}</b> ${gUnit()} <span class="dim">(${esc(L.tolerance)} ${j.tol}%)</span></div>
+    <label class="f"><span>${esc(L.receivedWt)} (${gUnit()})</span>
+      <input id="rjW" class="num" type="number" step="0.001" value="${j.expected.toFixed(3)}" oninput="previewJob('${id}')"></label>
+    <div class="note" id="rjNote"></div></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="receiveJob('${id}')">${esc(L.receiveJob)}</button></div></div></div>`;
+  previewJob(id);
+}
+function previewJob(id){
+  const L=t(), j=JOBS.find(x=>x.id===id);
+  const w=parseFloat(document.getElementById("rjW").value)||0;
+  const shortfall=j.issued-w, allowed=j.issued*j.tol/100, breach=shortfall>allowed;
+  const el=document.getElementById("rjNote");
+  el.className="note"+(breach?" red":" green");
+  el.innerHTML=`${esc(L.variance)} <b>${g(shortfall)}</b> ${gUnit()} · ${esc(L.tolerance)} ${g(allowed)} ${gUnit()}<br>
+    <b>${breach?esc(L.overTol):esc(L.withinTol)}</b>`;
+}
+function receiveJob(id){
+  const j=JOBS.find(x=>x.id===id);
+  const w=parseFloat(document.getElementById("rjW").value)||0;
+  j.received=round3(w); j.status="done";
+  const issuedFine=fine(j.issued,j.k), backFine=fine(w,j.k);
+  METAL[j.branch].atKarigar-=issuedFine; METAL[j.branch].owned+=backFine;
+  const v=jobVariance(j);
+  log("job", id+" · "+g(w)+" g "+(v.breach?"over tolerance":"within tolerance"));
+  closeModal(); renderAll();
+  toast(t().jobReceived+(v.breach?" — "+t().overTol:""), v.breach);
+}
+
+/* ================= purchases ================= */
+function viewPurchases(){
+  const L=t();
+  const list=PURCHASES.filter(p=>!myRole().branchLock||p.branch===S.branch);
+  const openP=list.filter(p=>p.status==="open");
+  const openFine=openP.reduce((a,p)=>a+p.fine,0);
+  return `<div class="vhead"><h2>${esc(L.v_pur_h)}</h2><p>${esc(L.v_pur_p)}</p></div>
+  ${branchPicker()}
+  <div class="grid3">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.openPos)}</div>
+      <div class="val neg">${g(openFine)}</div><div class="sub">${esc(L.fineGrams)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.costAtToday)}</div>
+      <div class="val">${q0(openFine*S.rates[24].sell)}</div><div class="sub">QAR · ${q(S.rates[24].sell)} / ${gUnit()}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.settled)}</div>
+      <div class="val">${q0(list.filter(p=>p.status==="settled").length)}</div>
+      <div class="sub">${esc(L.nav.purchases)}</div></div></div></div>
+  </div>
+  <div class="panel"><h3>${esc(L.nav.purchases)}<span class="side">
+    <button class="btn sm ghost" onclick="openNewPurchase()">${esc(L.newPurchase)}</button></span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>#</th><th>${esc(L.supplier)}</th><th>${esc(L.branch)}</th><th>${esc(L.date)}</th>
+      <th class="r">${esc(L.fineBought)}</th><th>${esc(L.mode)}</th><th class="r">${esc(L.rate)}</th>
+      <th class="r">${esc(L.amountCol)}</th><th></th></tr></thead>
+    <tbody>${list.map(p=>`<tr>
+      <td class="mono tiny">${esc(p.id)}</td><td>${esc(supName(p.sup))}</td>
+      <td class="tiny">${esc(branchName(p.branch))}</td><td class="mono tiny">${esc(p.date)}</td>
+      <td class="r mono">${g(p.fine)}</td>
+      <td>${p.mode==="unfixed"?`<span class="pill red">${esc(L.unfixed)}</span>`:`<span class="pill green">${esc(L.fixed)}</span>`}</td>
+      <td class="r mono">${p.rate?q(p.rate):"—"}</td>
+      <td class="r mono">${p.amount?q0(p.amount):`<span class="dim">${q0(p.fine*S.rates[24].sell)}</span>`}</td>
+      <td class="r">${p.status==="open"?`<button class="btn ghost sm" onclick="fixPurchase('${p.id}')">${esc(L.fixNow)}</button>`:""}</td>
+    </tr>`).join("")}</tbody></table></div></div>
+  <div class="note">${esc(L.metalExplain)}</div>`;
+}
+function openNewPurchase(){
+  const L=t();
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.newPurchase)}</h3><div class="mb">
+    <label class="f"><span>${esc(L.supplier)}</span><select id="npS">
+      ${SUPPLIERS.map(s=>`<option value="${s.id}">${esc(nm(s))}</option>`).join("")}</select></label>
+    <div class="frow">
+      <label class="f"><span>${esc(L.fineBought)} (${gUnit()})</span><input id="npW" class="num" type="number" step="0.001" value="250.000"></label>
+      <label class="f"><span>${esc(L.mode)}</span><select id="npM">
+        <option value="unfixed">${esc(L.unfixed)}</option><option value="fixed">${esc(L.fixed)}</option></select></label>
+    </div></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="createPurchase()">${esc(L.newPurchase)}</button></div></div></div>`;
+}
+function createPurchase(){
+  const w=parseFloat(document.getElementById("npW").value)||0;
+  const mode=document.getElementById("npM").value;
+  const id="P-"+String(2262+PURCHASES.length);
+  PURCHASES.unshift({id, sup:document.getElementById("npS").value, branch:S.branch, date:TODAY,
+    fine:round3(w), k:24, mode, rate:mode==="fixed"?S.rates[24].sell:0,
+    amount:mode==="fixed"?round2(w*S.rates[24].sell):0, status:mode==="fixed"?"settled":"open"});
+  METAL[S.branch].owned+=w;
+  if (mode==="unfixed") METAL[S.branch].owed+=w;
+  log("purchase", id+" · "+g(w)+" g "+mode);
+  closeModal(); renderAll(); toast(t().purchaseAdded);
+}
+function fixPurchase(id){
+  const p=PURCHASES.find(x=>x.id===id); if(!p) return;
+  p.mode="fixed"; p.status="settled"; p.rate=S.rates[24].sell; p.amount=round2(p.fine*p.rate);
+  METAL[p.branch].owed-=p.fine;
+  log("purchase", id+" fixed at "+q(p.rate));
+  renderAll(); toast(t().fixedOk+" · QAR "+q0(p.amount));
+}
+
+/* ================= metal ================= */
+function viewMetal(){
+  const L=t(), rate24=S.rates[24].sell, mt=metalTotals(), netTot=mt.owned+mt.scrap+mt.atKarigar-mt.owed;
+  const moves=[-5,-2,2,5];
+  return `<div class="vhead"><h2>${esc(L.v_metal_h)}</h2><p>${esc(L.v_metal_p)}</p></div>
+  <div class="grid3">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.ownedStock)} + ${esc(L.scrapHeld)} + ${esc(L.atKarigar)}</div>
+      <div class="val">${g(mt.owned+mt.scrap+mt.atKarigar)}</div><div class="sub">${esc(L.fineGrams)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.supplierOwed)}</div>
+      <div class="val neg">${g(mt.owed)}</div><div class="sub">${esc(L.fineGrams)} · ${esc(L.consigned)} ${g(mt.consigned)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.netPosition)}</div>
       <div class="val ${netTot>=0?"pos":"neg"}">${netTot>=0?"+":"−"}${g(Math.abs(netTot))}</div>
       <div class="sub">${netTot>=0?esc(L.longPos):esc(L.shortPos)}</div></div></div></div>
   </div>
-
-  <div class="panel">
-    <h3>${esc(L.byBranch)}<span class="side">${esc(L.valueAt)} ${q(rate24)}</span></h3>
-    <div class="pbody" style="padding:0;overflow-x:auto">
-      <table>
-        <thead><tr>
-          <th>${esc(L.branch)}</th>
-          <th class="r">${esc(L.ownedStock)}</th>
-          <th class="r">${esc(L.consigned)}</th>
-          <th class="r">${esc(L.scrapHeld)}</th>
-          <th class="r">${esc(L.supplierOwed)}</th>
-          <th class="r">${esc(L.netPosition)}</th>
-          <th class="r">QAR</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-        <tfoot><tr style="border-top:2px solid var(--velvet)">
-          <td><b>${esc(L.consolidated)}</b></td>
-          <td class="r mono"><b>${g(tot.owned)}</b></td>
-          <td class="r mono dim">${g(tot.consigned)}</td>
-          <td class="r mono"><b>${g(tot.scrap)}</b></td>
-          <td class="r mono" style="color:var(--oxblood)"><b>−${g(tot.owed)}</b></td>
-          <td class="r mono"><b>${netTot>=0?"+":"−"}${g(Math.abs(netTot))}</b></td>
-          <td class="r mono"><b>${q0(netTot*rate24)}</b></td>
-        </tr></tfoot>
-      </table>
-    </div>
-  </div>
-
+  <div class="panel"><h3>${esc(L.byBranch)}<span class="side">${esc(L.valueAt)} ${q(rate24)}</span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>${esc(L.branch)}</th><th class="r">${esc(L.ownedStock)}</th><th class="r">${esc(L.atKarigar)}</th>
+      <th class="r">${esc(L.scrapHeld)}</th><th class="r">${esc(L.consigned)}</th><th class="r">${esc(L.supplierOwed)}</th>
+      <th class="r">${esc(L.netPosition)}</th><th class="r">QAR</th></tr></thead>
+    <tbody>${BRANCHES.map(b=>{const m=METAL[b.id], n=metalNet(m);return `<tr>
+      <td><b>${esc(nm(b))}</b></td><td class="r mono">${g(m.owned)}</td><td class="r mono">${g(m.atKarigar)}</td>
+      <td class="r mono">${g(m.scrap)}</td><td class="r mono dim">${g(m.consigned)}</td>
+      <td class="r mono" style="color:var(--oxblood)">−${g(m.owed)}</td>
+      <td class="r mono"><b>${n>=0?"":"−"}${g(Math.abs(n))}</b></td>
+      <td class="r mono dim">${q0(n*rate24)}</td></tr>`}).join("")}</tbody>
+    <tfoot><tr style="border-top:2px solid var(--velvet)">
+      <td><b>${esc(L.consolidated)}</b></td><td class="r mono"><b>${g(mt.owned)}</b></td>
+      <td class="r mono"><b>${g(mt.atKarigar)}</b></td><td class="r mono"><b>${g(mt.scrap)}</b></td>
+      <td class="r mono dim">${g(mt.consigned)}</td>
+      <td class="r mono" style="color:var(--oxblood)"><b>−${g(mt.owed)}</b></td>
+      <td class="r mono"><b>${netTot>=0?"+":"−"}${g(Math.abs(netTot))}</b></td>
+      <td class="r mono"><b>${q0(netTot*rate24)}</b></td></tr></tfoot>
+  </table></div></div>
+  <div class="panel"><h3>${esc(L.sensitivity)}</h3><div class="pbody" style="padding:0"><table>
+    <thead><tr><th>${esc(L.rate)}</th>${moves.map(m=>`<th class="r">${m>0?"+":""}${m}%</th>`).join("")}</tr></thead>
+    <tbody><tr><td class="tiny dim">${esc(L.netPosition)} × Δ${esc(L.rate)}</td>
+      ${moves.map(m=>{const d=netTot*rate24*m/100;return `<td class="r mono" style="color:${d>=0?"var(--ok)":"var(--oxblood)"}">${d>=0?"+":"−"}${q0(Math.abs(d))}</td>`}).join("")}
+    </tr></tbody></table></div></div>
   <div class="note">${esc(L.metalExplain)}</div>`;
 }
 
-/* ---------------- view: compliance ---------------- */
-function viewCompliance(){
-  const L = t();
-  const openN = ALERTS.filter(a=>a.status==="open").length;
-
-  const alertRows = ALERTS.map(a=>`
-    <tr>
-      <td class="mono tiny">${esc(a.date)}</td>
-      <td><b>${esc(alertTitle(a))}</b><div class="tiny dim">${esc(alertBody(a))}</div></td>
-      <td>${esc(custName(a.cust))}</td>
-      <td class="r mono">${a.amount?q0(a.amount):"—"}</td>
-      <td class="r">${a.status==="open"
-        ? `<span class="pill red">${esc(L.open)}</span>`
-        : `<span class="pill green">${esc(L.cleared)}</span>`}</td>
-      <td class="r">${a.status==="open"
-        ? `<button class="btn ghost sm" onclick="escalate('${a.id}')">${esc(L.escalate)}</button>` : ""}</td>
-    </tr>`).join("");
-
-  const cddRows = CDD.map(c=>`
-    <tr>
-      <td class="mono tiny">${esc(c.date)}</td>
-      <td>${esc(c.custName || custName(c.cust))}</td>
-      <td>${esc({qid:L.qid,passport:L.passport,cr:L.cr}[c.idType]||c.idType)}</td>
-      <td class="mono tiny">${esc(c.num)}</td>
-      <td class="mono tiny">${esc(c.expiry)}</td>
-      <td class="tiny dim">${esc(c.by)}</td>
-    </tr>`).join("");
-
-  return `
-  <div class="vhead">
-    <h2>${esc(L.v_comp_h)}</h2>
-    <p>${esc(L.v_comp_p)}</p>
+/* ================= day close ================= */
+function viewDayClose(){
+  const L=t(), b=S.branch, d=BRANCH_DAY[b];
+  const todays=SALES.filter(s=>s.date===TODAY&&s.branch===b&&!s.void);
+  const cash=d.cashExpected+todays.reduce((a,s)=>a+s.cash,0);
+  const card=todays.reduce((a,s)=>a+s.card,0), tr=todays.reduce((a,s)=>a+s.transfer,0);
+  const closed=CLOSES.find(c=>c.date===TODAY&&c.branch===b);
+  const counted=parseFloat(S.countedCash)||0;
+  const variance=counted-cash;
+  return `<div class="vhead"><h2>${esc(L.v_close_h)}</h2><p>${esc(L.v_close_p)}</p></div>
+  ${branchPicker()}
+  <div class="grid4">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.expectedCash)}</div>
+      <div class="val">${q0(cash)}</div><div class="sub">QAR</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.cardTotal)}</div>
+      <div class="val">${q0(card)}</div><div class="sub">QAR</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.transferTotal)}</div>
+      <div class="val">${q0(tr)}</div><div class="sub">QAR</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.invoices)}</div>
+      <div class="val">${q0(d.inv+todays.length)}</div><div class="sub">${esc(branchName(b))}</div></div></div></div>
   </div>
-
-  <div class="grid3">
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.cddRecords)}</div><div class="val">${q0(CDD.length)}</div>
-      <div class="sub">QAR ${q0(AML_CASH_THRESHOLD)} ${S.lang==="ar"?"حد الاستحقاق":"trigger"}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.alerts)}</div><div class="val ${openN?"neg":"pos"}">${q0(openN)}</div>
-      <div class="sub">${esc(L.open)}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric">
-      <div class="lab">${esc(L.retention)}</div><div class="val">10</div>
-      <div class="sub">${esc(L.retentionSub)}</div></div></div></div>
-  </div>
-
-  <div class="panel">
-    <h3>${esc(L.alerts)}</h3>
-    <div class="pbody" style="padding:0;overflow-x:auto">
-      <table><thead><tr>
-        <th>${esc(L.date)}</th><th>${esc(L.alerts)}</th><th>${esc(L.customerCol)}</th>
-        <th class="r">${esc(L.amountCol)}</th><th class="r">${esc(L.statusCol)}</th><th></th>
-      </tr></thead><tbody>${alertRows}</tbody></table>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h3>${esc(L.cddRecords)}</h3>
-    <div class="pbody" style="padding:0;overflow-x:auto">
-      <table><thead><tr>
-        <th>${esc(L.date)}</th><th>${esc(L.customerCol)}</th><th>${esc(L.idType)}</th>
-        <th>${esc(L.idNumber)}</th><th>${esc(L.expiry)}</th><th>${esc(L.recordedBy)}</th>
-      </tr></thead><tbody>${cddRows}</tbody></table>
-    </div>
-  </div>`;
+  <div class="panel"><h3>${esc(L.closeDay)} — ${esc(branchName(b))} · ${esc(TODAY)}</h3><div class="pbody">
+    ${closed?`<div class="note green"><b>${esc(L.closedOk)}</b> · ${esc(L.closedBy)} ${esc(userName(closed.by))}<br>
+      ${esc(L.varianceCash)} ${q(closed.variance)}</div>`
+    :`<div class="grid2">
+      <div>
+        <label class="f"><span>${esc(L.countedCash)} (QAR)</span>
+          <input class="num" type="number" step="0.01" value="${esc(S.countedCash)}" data-fk="cc"
+            oninput="S.countedCash=this.value;renderView();focusBack('cc')" placeholder="${q0(cash)}"></label>
+        <button class="btn gold" onclick="closeDay(${cash})" ${S.countedCash===""?"disabled":""}>${esc(L.closeDay)}</button>
+        ${S.countedCash===""?`<div class="tiny dim" style="margin-top:6px">${esc(L.enterCount)}</div>`:""}
+      </div>
+      <div>
+        <div class="formula">
+          <div>${esc(L.expectedCash)} <b style="float:inline-end">${q(cash)}</b></div>
+          <div>${esc(L.countedCash)} <b style="float:inline-end">${q(counted)}</b></div>
+          <div style="border-top:2px solid var(--velvet);margin-top:6px;padding-top:6px">
+            ${esc(L.overShort)} <b style="float:inline-end;color:${Math.abs(variance)<0.01?"var(--ok)":"var(--oxblood)"}">
+            ${variance>=0?"+":"−"}${q(Math.abs(variance))}</b></div>
+        </div>
+        ${S.countedCash!==""&&Math.abs(variance)<0.01?`<div class="note green" style="margin-top:9px">${esc(L.noVarianceOk)}</div>`:""}
+        ${S.countedCash!==""&&Math.abs(variance)>=0.01?`<div class="note red" style="margin-top:9px">${esc(L.varianceFlag)}</div>`:""}
+      </div>
+    </div>`}
+  </div></div>
+  ${CLOSES.length?`<div class="panel"><h3>${esc(L.nav.dayclose)}</h3><div class="pbody" style="padding:0"><table>
+    <thead><tr><th>${esc(L.date)}</th><th>${esc(L.branch)}</th><th class="r">${esc(L.expectedCash)}</th>
+      <th class="r">${esc(L.countedCash)}</th><th class="r">${esc(L.varianceCash)}</th><th>${esc(L.closedBy)}</th></tr></thead>
+    <tbody>${CLOSES.map(c=>`<tr><td class="mono tiny">${esc(c.date)}</td><td>${esc(branchName(c.branch))}</td>
+      <td class="r mono">${q(c.expected)}</td><td class="r mono">${q(c.counted)}</td>
+      <td class="r mono" style="color:${Math.abs(c.variance)<0.01?"var(--ok)":"var(--oxblood)"}">${c.variance>=0?"+":"−"}${q(Math.abs(c.variance))}</td>
+      <td class="tiny dim">${esc(userName(c.by))}</td></tr>`).join("")}</tbody></table></div></div>`:""}`;
 }
+function closeDay(expected){
+  const counted=parseFloat(S.countedCash)||0, variance=round2(counted-expected);
+  CLOSES.unshift({date:TODAY, branch:S.branch, expected, counted, variance, by:S.user});
+  log("close", branchName(S.branch)+" · "+(variance>=0?"+":"")+q(variance));
+  S.countedCash=""; renderAll();
+  toast(t().closedOk+(Math.abs(variance)>=0.01?" · "+t().varianceCash+" "+q(variance):""), Math.abs(variance)>=0.01);
+}
+
+/* ================= compliance ================= */
+function viewCompliance(){
+  const L=t(), tab=S.tab.comp||"alerts", openN=ALERTS.filter(a=>a.status==="open").length;
+  let body="";
+  if (tab==="alerts"){
+    body=`<div class="pbody" style="padding:0;overflow-x:auto"><table>
+      <thead><tr><th>${esc(L.date)}</th><th>${esc(L.alerts)}</th><th>${esc(L.customerCol)}</th>
+        <th class="r">${esc(L.amountCol)}</th><th>${esc(L.statusCol)}</th><th></th></tr></thead>
+      <tbody>${ALERTS.map(a=>`<tr><td class="mono tiny">${esc(a.date)}</td>
+        <td><b>${esc(alertTitle(a))}</b><div class="tiny dim">${esc(alertBody(a))}</div></td>
+        <td>${esc(custName(a.cust))}</td><td class="r mono">${a.amount?q0(a.amount):"—"}</td>
+        <td>${a.status==="open"?`<span class="pill red">${esc(L.open)}</span>`:`<span class="pill green">${esc(L.cleared)}</span>`}</td>
+        <td class="r">${a.status==="open"?`<button class="btn ghost sm" onclick="escalate('${a.id}')">${esc(L.escalate)}</button>`:""}</td>
+      </tr>`).join("")}</tbody></table></div>`;
+  } else if (tab==="cdd"){
+    body=`<div class="pbody" style="padding:0;overflow-x:auto"><table>
+      <thead><tr><th>${esc(L.date)}</th><th>${esc(L.customerCol)}</th><th>${esc(L.idType)}</th>
+        <th>${esc(L.idNumber)}</th><th>${esc(L.expiry)}</th><th>${esc(L.recordedBy)}</th></tr></thead>
+      <tbody>${CDD.map(c=>`<tr><td class="mono tiny">${esc(c.date)}</td><td>${esc(c.custName||custName(c.cust))}</td>
+        <td>${esc({qid:L.qid,passport:L.passport,cr:L.cr}[c.idType]||c.idType)}</td>
+        <td class="mono tiny">${esc(c.num)}</td><td class="mono tiny">${esc(c.expiry)}</td>
+        <td class="tiny dim">${esc(userName(c.by))}</td></tr>`).join("")}</tbody></table></div>`;
+  } else {
+    body=`<div class="pbody" style="padding:0;overflow-x:auto"><table>
+      <thead><tr><th>${esc(L.when)}</th><th>${esc(L.who)}</th><th>${esc(L.action)}</th><th>${esc(L.detail)}</th></tr></thead>
+      <tbody>${AUDIT.map(a=>`<tr><td class="mono tiny">${esc(a.t)}</td><td>${esc(userName(a.user))}</td>
+        <td><span class="pill grey">${esc(actLabel(a.act))}</span></td><td class="tiny">${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  return `<div class="vhead"><h2>${esc(L.v_comp_h)}</h2><p>${esc(L.v_comp_p)}</p></div>
+  <div class="grid3">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.cddRecords)}</div>
+      <div class="val">${q0(CDD.length)}</div><div class="sub">QAR ${q0(AML_CASH_THRESHOLD)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.alerts)}</div>
+      <div class="val ${openN?"neg":"pos"}">${q0(openN)}</div><div class="sub">${esc(L.open)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.retention)}</div>
+      <div class="val">${q0(RETENTION_YEARS)}</div><div class="sub">${esc(L.retentionSub)}</div></div></div></div>
+  </div>
+  <div class="tabs">
+    <button onclick="setTab('comp','alerts')" aria-selected="${tab==="alerts"}">${esc(L.tabAlerts)}</button>
+    <button onclick="setTab('comp','cdd')" aria-selected="${tab==="cdd"}">${esc(L.tabCdd)}</button>
+    <button onclick="setTab('comp','audit')" aria-selected="${tab==="audit"}">${esc(L.tabAudit)}</button>
+  </div>
+  <div class="panel">${body}</div>`;
+}
+function setTab(k,v){ S.tab[k]=v; renderView(); }
 function escalate(id){
-  const a = ALERTS.find(x=>x.id===id); if(!a) return;
-  a.status = "cleared";
+  const a=ALERTS.find(x=>x.id===id); if(!a) return;
+  a.status="cleared"; log("void","MLRO · "+alertTitle(a));
   renderAll(); toast(t().escalated);
 }
 
-/* ---------------- render ---------------- */
+/* ================= render ================= */
 function renderView(){
-  const L = t();
-  const host = document.getElementById("view");
-  const picker = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-      <span class="tiny dim">${esc(L.branch)}</span>
-      <select onchange="S.branch=this.value;syncUrl();renderAll()" style="padding:5px 9px;border:1px solid var(--rule);background:#fff">
-        ${BRANCHES.map(b=>`<option value="${b.id}" ${S.branch===b.id?"selected":""}>${esc(nameOf(b))}</option>`).join("")}
-      </select>
-    </div>`;
-  const body =
+  const host=document.getElementById("viewHost"); if(!host) return;
+  host.innerHTML =
       S.view==="counter"    ? viewCounter()
+    : S.view==="register"   ? viewRegister()
     : S.view==="stock"      ? viewStock()
+    : S.view==="workshop"   ? viewWorkshop()
+    : S.view==="purchases"  ? viewPurchases()
     : S.view==="metal"      ? viewMetal()
+    : S.view==="dayclose"   ? viewDayClose()
     : S.view==="compliance" ? viewCompliance()
     : viewBoard();
-  host.innerHTML = (S.view==="counter"||S.view==="stock" ? picker : "") + body;
-
-  if (_focusKey){
-    const el = host.querySelector('[data-fk="'+_focusKey+'"]');
-    if (el){ el.focus(); const v=el.value; el.value=""; el.value=v; }
-    _focusKey = null;
+  if(_fk){
+    const el=host.querySelector('[data-fk="'+_fk+'"]');
+    if(el){ el.focus(); const v=el.value; el.value=""; el.value=v; }
+    _fk=null;
   }
 }
-function renderAll(){ renderNav(); renderBoard(false); renderView(); }
+function renderAll(flash){
+  const L=t(), u=me();
+  if(!S.user){ document.getElementById("app").innerHTML=viewLogin(); return; }
+  document.getElementById("app").innerHTML=`<div class="shell">
+    <aside class="rail">
+      <div class="brand"><h1>${esc(L.brand)}</h1><p>${L.brandSub}</p></div>
+      <nav class="nav">${renderNav()}</nav>
+      <div class="railfoot">
+        <div class="me"><span class="av">${esc(u.init)}</span>
+          <span><span class="nm">${esc(nm(u))}</span><br><span class="rl">${esc(roleName(u.role))} · ${esc(branchName(S.branch))}</span></span></div>
+        <div class="langs">
+          <button onclick="setLang('en')" aria-pressed="${S.lang==="en"}">English</button>
+          <button onclick="setLang('ar')" aria-pressed="${S.lang==="ar"}">العربية</button></div>
+        <button class="out" onclick="signOut()">${esc(L.signOut)}</button>
+        <div style="margin-top:6px">${esc(L.demoNote)}</div>
+      </div>
+    </aside>
+    <div class="main">${renderBoard(flash)}<div class="view" id="viewHost"></div></div>
+  </div>`;
+  renderView();
+}
 
-/* ---------------- boot ---------------- */
+/* ================= boot ================= */
 (function(){
-  const p = new URLSearchParams(location.search);
-  if (p.get("lang")==="ar") S.lang="ar";
-  if (["board","counter","stock","metal","compliance"].includes(p.get("view"))) S.view = p.get("view");
-  if (BRANCHES.some(b=>b.id===p.get("branch"))) S.branch = p.get("branch");
-  setLang(S.lang);
+  const p=new URLSearchParams(location.search);
+  if(p.get("lang")==="ar") S.lang="ar";
+  const views=["board","counter","register","stock","workshop","purchases","metal","dayclose","compliance"];
+  if(views.includes(p.get("view"))) S.view=p.get("view");
+  if(BRANCHES.some(b=>b.id===p.get("branch"))) S.branch=p.get("branch");
+  if(USERS.some(u=>u.id===p.get("as"))) signIn(p.get("as"));
+  document.documentElement.lang=S.lang;
+  document.documentElement.dir=T[S.lang].dir;
+  document.body.dir=T[S.lang].dir;
+  renderAll();
 })();
+
 </script>
 </body>
 </html>
