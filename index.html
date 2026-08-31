@@ -303,6 +303,35 @@ let PURCHASES = [
   {id:"P-2254", sup:"s2", branch:"vl", date:"2026-08-18", fine:310.000, k:24, mode:"fixed",   rate:418.90, amount:129859,  status:"settled"},
 ];
 
+/* Gold savings schemes. Instalments convert to grams at the effective rate.
+   Rate protection means the shop owes metal at a price fixed earlier — a short position. */
+const PLANS = [
+  {id:"p1", en:"Sadaf 11+1",   ar:"صدف 11+1",   months:11, bonusMonths:1, k:22, prot:"enrol",  makingOff:0},
+  {id:"p2", en:"Lulu 12",      ar:"لؤلؤ 12",     months:12, bonusMonths:0, k:22, prot:"lowest", makingOff:25},
+  {id:"p3", en:"Dhahab Flexi", ar:"ذهب المرن",   months:6,  bonusMonths:0, k:22, prot:"none",   makingOff:10},
+];
+let ENROLMENTS = [
+  {id:"GS-0118", cust:"c1", branch:"sw", plan:"p1", start:"2025-11-05", monthly:2000, status:"active",
+   protRate:372.40, payments:[
+     {date:"2025-11-05",amount:2000,rate:372.40},{date:"2025-12-05",amount:2000,rate:372.40},
+     {date:"2026-01-05",amount:2000,rate:372.40},{date:"2026-02-05",amount:2000,rate:372.40},
+     {date:"2026-03-05",amount:2000,rate:372.40},{date:"2026-04-05",amount:2000,rate:372.40},
+     {date:"2026-05-05",amount:2000,rate:372.40},{date:"2026-06-05",amount:2000,rate:372.40},
+     {date:"2026-07-05",amount:2000,rate:372.40}]},
+  {id:"GS-0126", cust:"c2", branch:"vl", plan:"p2", start:"2026-02-12", monthly:1500, status:"active",
+   protRate:358.10, payments:[
+     {date:"2026-02-12",amount:1500,rate:361.20},{date:"2026-03-12",amount:1500,rate:358.10},
+     {date:"2026-04-12",amount:1500,rate:358.10},{date:"2026-05-12",amount:1500,rate:358.10},
+     {date:"2026-06-12",amount:1500,rate:358.10},{date:"2026-07-12",amount:1500,rate:358.10},
+     {date:"2026-08-12",amount:1500,rate:358.10}]},
+  {id:"GS-0131", cust:"c3", branch:"lm", plan:"p3", start:"2026-04-20", monthly:3000, status:"active",
+   protRate:0, payments:[
+     {date:"2026-04-20",amount:3000,rate:364.80},{date:"2026-05-20",amount:3000,rate:369.10},
+     {date:"2026-06-20",amount:3000,rate:374.50},{date:"2026-07-20",amount:3000,rate:381.60}]},
+  {id:"GS-0097", cust:"c4", branch:"sw", plan:"p1", start:"2025-06-01", monthly:1000, status:"matured",
+   protRate:341.90, payments:Array.from({length:11},(_,i)=>({date:"2025-"+String(6+i%7).padStart(2,"0")+"-01",amount:1000,rate:341.90}))},
+];
+
 let ALERTS = [
   {id:"a1", type:"structuring", cust:"c4", amount:141400, date:"2026-08-29", status:"open"},
   {id:"a2", type:"pep",         cust:"c3", amount:0,      date:"2026-08-27", status:"open"},
@@ -324,15 +353,27 @@ let CLOSES = [];
 let S = {
   lang:"en", user:null, view:"board", branch:"sw",
   spot:3612.40, fx:3.6400, spreadPct:2.0, ratesSetAt:"09:15", rates:null,
+  rateSource:"official", refRate:387.25, rateBy:"u1",
   bill:null, tab:{}, stockFilter:{karat:"",q:""}, countedCash:"",
 };
-function computeRates(spot, fx, spreadPct){
-  const base = (spot/31.1034768)*fx, out = {};
+/* Three ways a Qatari shop sets its board:
+     official  — take the local market/association rate for the reference karat, derive the rest
+     benchmark — derive from the global spot price and the USD/QAR rate
+     fixed     — the owner keys 24K directly
+   All three produce the same shape; only the base differs. */
+function ratesFrom24(base24, spreadPct){
+  const out = {};
   for (const k of [24,22,21,18]){
-    const sell = base*PURITY[k];
+    const sell = base24*PURITY[k];
     out[k] = {sell:round2(sell), buy:round2(sell*(1-spreadPct/100))};
   }
   return out;
+}
+function computeRates(spot, fx, spreadPct){
+  return ratesFrom24((spot/31.1034768)*fx, spreadPct);
+}
+function ratesFromReference(refRate, refKarat, spreadPct){
+  return ratesFrom24(refRate/PURITY[refKarat], spreadPct);
 }
 function newBill(){
   return {lines:[], oldGold:[], customer:"", discPct:0, discApprovedBy:"",
@@ -369,12 +410,40 @@ function billTotals(b){
   const sub = gold + making - discount + stones;
   return {gold, making, stones, discount, sub, oldGoldCredit, net:Math.max(0, sub-oldGoldCredit)};
 }
-function metalNet(m){ return m.owned + m.scrap + m.atKarigar - m.owed }
+function metalNet(m, bid){ return m.owned + m.scrap + m.atKarigar - m.owed - (bid?schemeFineByBranch(bid):0) }
 function metalTotals(){
-  return Object.values(METAL).reduce((a,m)=>({
+  const t = Object.entries(METAL).reduce((a,[bid,m])=>({
     owned:a.owned+m.owned, consigned:a.consigned+m.consigned, scrap:a.scrap+m.scrap,
-    owed:a.owed+m.owed, atKarigar:a.atKarigar+m.atKarigar
-  }),{owned:0,consigned:0,scrap:0,owed:0,atKarigar:0});
+    owed:a.owed+m.owed, atKarigar:a.atKarigar+m.atKarigar, scheme:a.scheme+schemeFineByBranch(bid)
+  }),{owned:0,consigned:0,scrap:0,owed:0,atKarigar:0,scheme:0});
+  t.net = t.owned + t.scrap + t.atKarigar - t.owed - t.scheme;
+  return t;
+}
+
+/* ---- buy-back against an original sale ----
+   Base metal value only. Making charges and design premium are never refunded. */
+function findOriginalSale(tag){
+  for (const s of SALES){
+    if (s.void) continue;
+    if ((s.lines||[]).some(l=>l.tag===tag)) return s;
+  }
+  return null;
+}
+function buyBackQuote(tag, rates){
+  const it = STOCK.find(x=>x.tag===tag);
+  if (!it) return null;
+  const sale = findOriginalSale(tag);
+  const net = netOf(it);
+  const back = net * rates[it.k].buy;
+  const paidAt = sale ? priceLine(it, sale.rates||rates) : null;
+  return {
+    item:it, sale, net, karat:it.k, back:round2(back),
+    paidGold: paidAt ? round2(paidAt.goldValue) : null,
+    paidMaking: paidAt ? round2(paidAt.making) : null,
+    paidStones: paidAt ? round2(paidAt.stones) : null,
+    paidTotal: paidAt ? round2(paidAt.total) : null,
+    notRefunded: paidAt ? round2(paidAt.making + paidAt.stones) : null,
+  };
 }
 function jobVariance(j){
   if (j.status!=="done") return null;
@@ -392,6 +461,42 @@ function log(act, detail){
   AUDIT.unshift({t:TODAY+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"),
                  user:S.user, act, detail});
 }
+/* ---- savings scheme engine ---- */
+const planOf = e => PLANS.find(p=>p.id===e.plan);
+function effectiveRate(e, marketRate){
+  const pl = planOf(e);
+  if (pl.prot==="enrol")  return e.protRate || marketRate;
+  if (pl.prot==="lowest") return Math.min(e.protRate || marketRate, marketRate);
+  return marketRate;
+}
+function schemeState(e){
+  const pl = planOf(e);
+  const cash = e.payments.reduce((a,x)=>a+x.amount,0);
+  const grams = e.payments.reduce((a,x)=>a+x.amount/x.rate,0);         // grams at the plan karat
+  const bonusGrams = pl.bonusMonths && e.payments.length>=pl.months
+    ? (e.monthly/(e.protRate || e.payments[e.payments.length-1].rate))*pl.bonusMonths : 0;
+  const totalGrams = grams + bonusGrams;
+  const fineGrams = totalGrams*PURITY[pl.k];
+  const marketRate = S.rates[pl.k].sell;
+  const valueToday = totalGrams*marketRate;
+  return {cash, grams, bonusGrams, totalGrams, fineGrams, marketRate,
+          valueToday, exposure: valueToday - cash,
+          avgRate: grams>0 ? cash/grams : 0,
+          paid: e.payments.length, due: pl.months,
+          complete: e.payments.length>=pl.months};
+}
+function schemeTotals(){
+  return ENROLMENTS.filter(e=>e.status!=="redeemed").reduce((a,e)=>{
+    const st = schemeState(e);
+    return {cash:a.cash+st.cash, grams:a.grams+st.totalGrams, fine:a.fine+st.fineGrams,
+            value:a.value+st.valueToday, exposure:a.exposure+st.exposure, n:a.n+1};
+  }, {cash:0, grams:0, fine:0, value:0, exposure:0, n:0});
+}
+function schemeFineByBranch(bid){
+  return ENROLMENTS.filter(e=>e.status!=="redeemed"&&e.branch===bid)
+    .reduce((a,e)=>a+schemeState(e).fineGrams, 0);
+}
+
 const me       = () => USERS.find(u=>u.id===S.user) || USERS[0];
 const myRole   = () => ROLES[me().role];
 const can      = k => !!myRole()[k];
@@ -402,8 +507,30 @@ en:{
   dir:"ltr", brand:"AYAR", brandSub:"Gold retail management<br>State of Qatar",
   signIn:"Choose your account to sign in", demoNote:"Demonstration data",
   signOut:"Sign out", roleOwner:"Owner", roleManager:"Branch manager", roleSales:"Sales",
-  nav:{board:"Board",counter:"Counter",register:"Sales register",stock:"Stock",workshop:"Workshop",
-       purchases:"Purchases",metal:"Metal position",dayclose:"Day close",compliance:"Compliance"},
+  nav:{board:"Board",counter:"Counter",register:"Sales register",stock:"Stock",schemes:"Savings schemes",
+       workshop:"Workshop",purchases:"Purchases",metal:"Metal position",dayclose:"Day close",compliance:"Compliance"},
+  rateSource:"Where this rate came from", srcOfficial:"Local market rate", srcBenchmark:"Global benchmark",
+  srcFixed:"Set by the owner", refRate:"Reference rate", refKarat:"Reference karat",
+  publishedBy:"Published by", derivedNote:"Other karats are derived from this by purity.",
+  origTag:"Original tag, if we sold it", lookupTag:"Look up", origSaleFound:"Sold by us on",
+  origSaleNone:"Not one of ours, or sold before the system. Priced as ordinary scrap.",
+  origPaid:"Customer originally paid", returnable:"Returned as metal", notRefunded:"Not refunded",
+  makingNotRefunded:"Making charges and stone value are never refunded on a buy-back — only the metal comes back.",
+  buyBackOf:"Buy-back of",
+  v_sch_h:"Gold savings schemes",
+  v_sch_p:"Every gram promised to a scheme is metal the shop must deliver later at a price fixed earlier. That is a short position, and it belongs on the metal ledger rather than in a notebook.",
+  plan:"Plan", months:"Months", instalment:"Monthly", bonus:"Bonus", rateProtection:"Rate protection",
+  protEnrol:"Locked at enrolment", protLowest:"Lowest rate during the plan", protNone:"Rate on the day",
+  protectedAt:"Protected at", marketRate:"Rate today", gapPerGram:"Gap per gram",
+  enrolled:"Enrolled", paidSoFar:"Paid in", gramsCredited:"Grams credited", bonusGrams:"Bonus grams",
+  valueToday:"Worth today", exposure:"Exposure", schemeLiability:"Owed to scheme members",
+  schemeExposure:"Scheme exposure", makingOff:"Making discount at redemption",
+  exposureNote:"Exposure is what the promised metal is worth today, less the cash taken in. A positive figure is money the shop will find from its own margin when these schemes are redeemed.",
+  statusActive:"Running", statusMatured:"Matured", statusRedeemed:"Redeemed",
+  monthsPaid:"Instalments", payInstalment:"Record an instalment", paymentAdded:"Instalment recorded",
+  newEnrolment:"Enrol a customer", enrolAdded:"Customer enrolled", redeem:"Redeem", redeemed:"Scheme redeemed",
+  redeemBody:"Redeeming converts the accumulated grams into a purchase and clears the liability from the metal ledger.",
+  schemeOwedCol:"Scheme", ofPlan:"of",
   grpTrade:"Trade", grpMetal:"Metal", grpControl:"Control",
   boardTitle:"Rate board", asOf:"Set at", spot:"Spot", sell:"Sell", buy:"Buy back", perGram:"per gram",
   reviseRate:"Revise rate", noRateRight:"Only an owner or branch manager can change rates",
@@ -525,8 +652,30 @@ ar:{
   dir:"rtl", brand:"عِيار", brandSub:"إدارة تجارة الذهب<br>دولة قطر",
   signIn:"اختر حسابك لتسجيل الدخول", demoNote:"بيانات تجريبية",
   signOut:"تسجيل الخروج", roleOwner:"المالك", roleManager:"مدير الفرع", roleSales:"بائع",
-  nav:{board:"اللوحة",counter:"نقطة البيع",register:"سجل المبيعات",stock:"المخزون",workshop:"الورشة",
-       purchases:"المشتريات",metal:"مركز المعدن",dayclose:"إقفال اليوم",compliance:"الامتثال"},
+  nav:{board:"اللوحة",counter:"نقطة البيع",register:"سجل المبيعات",stock:"المخزون",schemes:"برامج الادخار",
+       workshop:"الورشة",purchases:"المشتريات",metal:"مركز المعدن",dayclose:"إقفال اليوم",compliance:"الامتثال"},
+  rateSource:"مصدر هذا السعر", srcOfficial:"سعر السوق المحلي", srcBenchmark:"المؤشر العالمي",
+  srcFixed:"يحدده المالك", refRate:"السعر المرجعي", refKarat:"العيار المرجعي",
+  publishedBy:"نشره", derivedNote:"تُشتق بقية العيارات منه حسب النقاوة.",
+  origTag:"رقم القطعة الأصلي إن كانت من عندنا", lookupTag:"بحث", origSaleFound:"بعناها بتاريخ",
+  origSaleNone:"ليست من قطعنا أو بيعت قبل النظام. تُسعَّر ككسر عادي.",
+  origPaid:"دفع العميل أصلاً", returnable:"يُعاد كمعدن", notRefunded:"لا يُعاد",
+  makingNotRefunded:"أجرة الصنعة وقيمة الأحجار لا تُعاد عند الاسترجاع — يعود المعدن وحده.",
+  buyBackOf:"استرجاع",
+  v_sch_h:"برامج ادخار الذهب",
+  v_sch_p:"كل جرام موعود لمشترك في برنامج هو معدن على المحل تسليمه لاحقاً بسعر ثُبِّت سابقاً. هذا مركز قصير، ومكانه دفتر المعدن لا الدفتر الورقي.",
+  plan:"البرنامج", months:"الأشهر", instalment:"القسط", bonus:"المكافأة", rateProtection:"حماية السعر",
+  protEnrol:"مثبَّت عند الاشتراك", protLowest:"أدنى سعر خلال البرنامج", protNone:"سعر اليوم",
+  protectedAt:"محمي عند", marketRate:"سعر اليوم", gapPerGram:"الفرق للجرام",
+  enrolled:"المشتركون", paidSoFar:"المسدَّد", gramsCredited:"الجرامات المقيدة", bonusGrams:"جرامات المكافأة",
+  valueToday:"قيمتها اليوم", exposure:"الانكشاف", schemeLiability:"مستحق لمشتركي البرامج",
+  schemeExposure:"انكشاف البرامج", makingOff:"خصم الصنعة عند الاستلام",
+  exposureNote:"الانكشاف هو قيمة المعدن الموعود اليوم ناقص النقد المحصَّل. الرقم الموجب مبلغ سيدفعه المحل من هامشه عند استلام هذه البرامج.",
+  statusActive:"جارٍ", statusMatured:"مستحق", statusRedeemed:"مستلَم",
+  monthsPaid:"الأقساط", payInstalment:"تسجيل قسط", paymentAdded:"سُجِّل القسط",
+  newEnrolment:"اشتراك عميل", enrolAdded:"تم الاشتراك", redeem:"استلام", redeemed:"تم الاستلام",
+  redeemBody:"الاستلام يحوِّل الجرامات المتراكمة إلى عملية شراء ويُسقط الالتزام من دفتر المعدن.",
+  schemeOwedCol:"البرامج", ofPlan:"من",
   grpTrade:"البيع", grpMetal:"المعدن", grpControl:"الرقابة",
   boardTitle:"لوحة الأسعار", asOf:"حُدِّد", spot:"العالمي", sell:"بيع", buy:"شراء", perGram:"للجرام",
   reviseRate:"تعديل السعر", noRateRight:"تعديل الأسعار للمالك أو مدير الفرع فقط",
@@ -674,7 +823,8 @@ function makingLabel(it){
   return it.mkv+" "+t().pctOfGold;
 }
 const actLabel = a => ({rate:t().actRate, discount:t().actDiscount, cdd:t().actCdd, close:t().actClose,
-  void:t().actVoid, sale:t().actSale, transfer:t().actTransfer, job:t().actJob, purchase:t().actPurchase}[a]||a);
+  void:t().actVoid, sale:t().actSale, transfer:t().actTransfer, job:t().actJob,
+  purchase:t().actPurchase, scheme:t().nav.schemes}[a]||a);
 const alertTitle = a => ({structuring:t().alertStructuring, pep:t().alertPep, highvalue:t().alertHighValue}[a.type]);
 const alertBody  = a => ({structuring:t().alertStructuringBody, pep:t().alertPepBody, highvalue:t().alertHighValueBody}[a.type]);
 
@@ -715,10 +865,11 @@ function renderBoard(flash){
       <div class="buy">${esc(L.buy)} ${q(S.rates[k].buy)}</div>
     </div>`).join("");
   return `<div class="board" id="board">
-    <div class="stamp"><b>${esc(L.boardTitle)}</b>${esc(L.asOf)} ${S.ratesSetAt} · QAR ${esc(L.perGram)}</div>
+    <div class="stamp"><b>${esc(L.boardTitle)}</b>${esc(L.asOf)} ${S.ratesSetAt} · QAR ${esc(L.perGram)}<br>
+      <span style="color:#6E8880">${esc(srcLabel(S.rateSource))}</span></div>
     <div class="karats">${karats}</div>
     <div class="act">
-      <span class="tiny" style="color:#8FA6A0">${esc(L.spot)} $${q(S.spot)}</span>
+      <span class="tiny" style="color:#8FA6A0">${S.rateSource==="benchmark"?esc(L.spot)+" $"+q(S.spot):esc(L.publishedBy)+" "+esc(userName(S.rateBy))}</span>
       <button onclick="openRateModal()" ${can("canRate")?"":"disabled title='"+esc(L.noRateRight)+"'"}>${esc(L.reviseRate)}</button>
     </div></div>`;
 }
@@ -730,35 +881,73 @@ function openRateModal(){
     <h3>${esc(L.modalRate_h)}</h3>
     <div class="mb">
       <p class="tiny dim" style="margin-top:0">${esc(L.modalRate_p)}</p>
-      <div class="frow">
-        <label class="f"><span>${esc(L.spotPrice)}</span><input id="rSpot" class="num" type="number" step="0.01" value="${S.spot}" oninput="previewRates()"></label>
-        <label class="f"><span>${esc(L.fx)}</span><input id="rFx" class="num" type="number" step="0.0001" value="${S.fx}" oninput="previewRates()"></label>
-      </div>
+      <label class="f"><span>${esc(L.rateSource)}</span>
+        <select id="rSrc" onchange="renderRateFields()">
+          <option value="official"  ${S.rateSource==="official"?"selected":""}>${esc(L.srcOfficial)}</option>
+          <option value="benchmark" ${S.rateSource==="benchmark"?"selected":""}>${esc(L.srcBenchmark)}</option>
+          <option value="fixed"     ${S.rateSource==="fixed"?"selected":""}>${esc(L.srcFixed)}</option>
+        </select></label>
+      <div id="rateFields"></div>
       <label class="f"><span>${esc(L.spread)} (%)</span><input id="rSpread" class="num" type="number" step="0.1" value="${S.spreadPct}" oninput="previewRates()"></label>
       <div class="note"><div style="margin-bottom:4px">${esc(L.computed)}</div><div id="ratePreview" class="formula"></div></div>
     </div>
     <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
     <button class="btn gold" onclick="publishRates()">${esc(L.publish)}</button></div>
   </div></div>`;
+  renderRateFields();
+}
+function renderRateFields(){
+  const L=t(), src=document.getElementById("rSrc").value;
+  const host=document.getElementById("rateFields");
+  if (src==="benchmark"){
+    host.innerHTML=`<div class="frow">
+      <label class="f"><span>${esc(L.spotPrice)}</span><input id="rSpot" class="num" type="number" step="0.01" value="${S.spot}" oninput="previewRates()"></label>
+      <label class="f"><span>${esc(L.fx)}</span><input id="rFx" class="num" type="number" step="0.0001" value="${S.fx}" oninput="previewRates()"></label></div>`;
+  } else if (src==="official"){
+    host.innerHTML=`<div class="frow">
+      <label class="f"><span>${esc(L.refRate)} (QAR / ${gUnit()})</span><input id="rRef" class="num" type="number" step="0.01" value="${S.refRate}" oninput="previewRates()"></label>
+      <label class="f"><span>${esc(L.refKarat)}</span><select id="rRefK" onchange="previewRates()">
+        ${[22,21,24,18].map(k=>`<option value="${k}">${esc(kLabel(k))}</option>`).join("")}</select></label></div>
+      <div class="tiny dim" style="margin:-4px 0 10px">${esc(L.derivedNote)}</div>`;
+  } else {
+    host.innerHTML=`<label class="f"><span>${esc(kLabel(24))} (QAR / ${gUnit()})</span>
+      <input id="rFix" class="num" type="number" step="0.01" value="${S.rates[24].sell}" oninput="previewRates()"></label>
+      <div class="tiny dim" style="margin:-4px 0 10px">${esc(L.derivedNote)}</div>`;
+  }
   previewRates();
 }
-function previewRates(){
-  const sp=parseFloat(document.getElementById("rSpot").value)||0;
-  const fx=parseFloat(document.getElementById("rFx").value)||0;
+function ratesFromForm(){
+  const src=document.getElementById("rSrc").value;
   const sd=parseFloat(document.getElementById("rSpread").value)||0;
-  const r=computeRates(sp,fx,sd);
+  if (src==="benchmark"){
+    return computeRates(parseFloat(document.getElementById("rSpot").value)||0,
+                        parseFloat(document.getElementById("rFx").value)||0, sd);
+  }
+  if (src==="official"){
+    return ratesFromReference(parseFloat(document.getElementById("rRef").value)||0,
+                              parseInt(document.getElementById("rRefK").value,10), sd);
+  }
+  return ratesFrom24(parseFloat(document.getElementById("rFix").value)||0, sd);
+}
+function previewRates(){
+  const r=ratesFromForm();
   document.getElementById("ratePreview").innerHTML=[24,22,21,18].map(k=>
     `${esc(kLabel(k))} &nbsp; <b>${q(r[k].sell)}</b> &nbsp;<span class="dim">${esc(t().buy)} ${q(r[k].buy)}</span>`).join("<br>");
 }
+function srcLabel(s){ return {official:t().srcOfficial, benchmark:t().srcBenchmark, fixed:t().srcFixed}[s]||s }
 function publishRates(){
-  const old24 = S.rates[24].sell;
-  S.spot=parseFloat(document.getElementById("rSpot").value)||S.spot;
-  S.fx=parseFloat(document.getElementById("rFx").value)||S.fx;
+  const old24=S.rates[24].sell, src=document.getElementById("rSrc").value;
   S.spreadPct=parseFloat(document.getElementById("rSpread").value)||S.spreadPct;
-  S.rates=computeRates(S.spot,S.fx,S.spreadPct);
+  if (src==="benchmark"){
+    S.spot=parseFloat(document.getElementById("rSpot").value)||S.spot;
+    S.fx=parseFloat(document.getElementById("rFx").value)||S.fx;
+  } else if (src==="official"){
+    S.refRate=parseFloat(document.getElementById("rRef").value)||S.refRate;
+  }
+  S.rates=ratesFromForm(); S.rateSource=src; S.rateBy=S.user;
   const d=new Date();
   S.ratesSetAt=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
-  log("rate","24K "+q(old24)+" → "+q(S.rates[24].sell));
+  log("rate", kLabel(24)+" "+q(old24)+" → "+q(S.rates[24].sell)+" · "+srcLabel(src));
   closeModal(); renderAll(true); toast(t().ratesPublished);
 }
 
@@ -767,7 +956,8 @@ function renderNav(){
   const L=t(), openA=ALERTS.filter(a=>a.status==="open").length, openJ=JOBS.filter(j=>j.status==="out").length;
   const groups=[
     [L.grpTrade,[["board",L.nav.board,""],["counter",L.nav.counter,S.bill.lines.length||""],
-                 ["register",L.nav.register,""],["stock",L.nav.stock,STOCK.filter(s=>s.status==="in").length]]],
+                 ["register",L.nav.register,""],["stock",L.nav.stock,STOCK.filter(s=>s.status==="in").length],
+                 ["schemes",L.nav.schemes,ENROLMENTS.filter(e=>e.status!=="redeemed").length]]],
     [L.grpMetal,[["workshop",L.nav.workshop,openJ||""],["purchases",L.nav.purchases,PURCHASES.filter(p=>p.status==="open").length||""],
                  ["metal",L.nav.metal,""]]],
     [L.grpControl,[["dayclose",L.nav.dayclose,""],["compliance",L.nav.compliance,openA||""]]],
@@ -794,7 +984,7 @@ function viewBoard(){
   const tot=Object.values(BRANCH_DAY).reduce((a,b)=>({inv:a.inv+b.inv,turnover:a.turnover+b.turnover,
     pieces:a.pieces+b.pieces,oldGold:a.oldGold+b.oldGold}),{inv:0,turnover:0,pieces:0,oldGold:0});
   const makingMargin=96400, base24=421.15;
-  const mt=metalTotals(), netFine=mt.owned+mt.scrap+mt.atKarigar-mt.owed;
+  const mt=metalTotals(), netFine=mt.net;
   const metalMargin=netFine*(S.rates[24].sell-base24);
   const openA=ALERTS.filter(a=>a.status==="open"), openJ=JOBS.filter(j=>j.status==="out");
   const outFine=openJ.reduce((a,j)=>a+fine(j.issued,j.k),0);
@@ -995,6 +1185,12 @@ function openOldGold(){
   const L=t();
   document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
     <h3>${esc(L.modalOld_h)}</h3><div class="mb">
+    <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:11px">
+      <label class="f" style="flex:1;margin:0"><span>${esc(L.origTag)}</span>
+        <input id="ogTag" placeholder="AY-22-04412" onkeydown="if(event.key==='Enter')lookupOriginal()"></label>
+      <button class="btn ghost" onclick="lookupOriginal()">${esc(L.lookupTag)}</button>
+    </div>
+    <div id="ogOrig"></div>
     <div class="frow">
       <label class="f"><span>${esc(L.weightIn)} (${gUnit()})</span><input id="ogWt" class="num" type="number" step="0.001" value="18.400" oninput="previewOld()"></label>
       <label class="f"><span>${esc(L.assessedKarat)}</span><select id="ogK" onchange="previewOld()">
@@ -1008,6 +1204,27 @@ function openOldGold(){
     <div class="note"><div id="ogPreview" class="formula"></div></div></div>
     <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
     <button class="btn gold" onclick="addOldGold()">${esc(L.addOldGold)}</button></div></div></div>`;
+  previewOld();
+}
+function lookupOriginal(){
+  const L=t(), tag=(document.getElementById("ogTag").value||"").trim().toUpperCase();
+  const host=document.getElementById("ogOrig");
+  if(!tag){ host.innerHTML=""; return; }
+  const qt=buyBackQuote(tag, S.bill.lockedRates);
+  if(!qt || !qt.sale){
+    host.innerHTML=`<div class="note" style="margin-bottom:11px">${esc(L.origSaleNone)}</div>`;
+    return;
+  }
+  document.getElementById("ogWt").value=qt.net.toFixed(3);
+  document.getElementById("ogK").value=String(qt.karat);
+  host.innerHTML=`<div class="note" style="margin-bottom:11px">
+    <b>${esc(L.origSaleFound)} ${esc(qt.sale.date)}</b> · ${esc(qt.sale.no)} · ${esc(nm(qt.item))}
+    <div class="formula" style="margin-top:6px">
+      <div>${esc(L.origPaid)} <b style="float:inline-end">${q(qt.paidTotal)}</b></div>
+      <div>${esc(L.returnable)} <b style="float:inline-end">${q(qt.back)}</b></div>
+      <div style="color:var(--oxblood)">${esc(L.notRefunded)} <b style="float:inline-end">${q(qt.notRefunded)}</b></div>
+    </div>
+    <div class="tiny" style="margin-top:6px">${esc(L.makingNotRefunded)}</div></div>`;
   previewOld();
 }
 function oldGoldCalc(){
@@ -1398,14 +1615,15 @@ function fixPurchase(id){
 
 /* ================= metal ================= */
 function viewMetal(){
-  const L=t(), rate24=S.rates[24].sell, mt=metalTotals(), netTot=mt.owned+mt.scrap+mt.atKarigar-mt.owed;
+  const L=t(), rate24=S.rates[24].sell, mt=metalTotals(), netTot=mt.net, sch=schemeTotals();
   const moves=[-5,-2,2,5];
   return `<div class="vhead"><h2>${esc(L.v_metal_h)}</h2><p>${esc(L.v_metal_p)}</p></div>
   <div class="grid3">
     <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.ownedStock)} + ${esc(L.scrapHeld)} + ${esc(L.atKarigar)}</div>
       <div class="val">${g(mt.owned+mt.scrap+mt.atKarigar)}</div><div class="sub">${esc(L.fineGrams)}</div></div></div></div>
-    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.supplierOwed)}</div>
-      <div class="val neg">${g(mt.owed)}</div><div class="sub">${esc(L.fineGrams)} · ${esc(L.consigned)} ${g(mt.consigned)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.supplierOwed)} + ${esc(L.schemeLiability)}</div>
+      <div class="val neg">${g(mt.owed+mt.scheme)}</div>
+      <div class="sub">${g(mt.owed)} + ${g(mt.scheme)} ${esc(L.fineGrams)}</div></div></div></div>
     <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.netPosition)}</div>
       <div class="val ${netTot>=0?"pos":"neg"}">${netTot>=0?"+":"−"}${g(Math.abs(netTot))}</div>
       <div class="sub">${netTot>=0?esc(L.longPos):esc(L.shortPos)}</div></div></div></div>
@@ -1414,11 +1632,12 @@ function viewMetal(){
   <div class="pbody" style="padding:0;overflow-x:auto"><table>
     <thead><tr><th>${esc(L.branch)}</th><th class="r">${esc(L.ownedStock)}</th><th class="r">${esc(L.atKarigar)}</th>
       <th class="r">${esc(L.scrapHeld)}</th><th class="r">${esc(L.consigned)}</th><th class="r">${esc(L.supplierOwed)}</th>
-      <th class="r">${esc(L.netPosition)}</th><th class="r">QAR</th></tr></thead>
-    <tbody>${BRANCHES.map(b=>{const m=METAL[b.id], n=metalNet(m);return `<tr>
+      <th class="r">${esc(L.schemeOwedCol)}</th><th class="r">${esc(L.netPosition)}</th><th class="r">QAR</th></tr></thead>
+    <tbody>${BRANCHES.map(b=>{const m=METAL[b.id], sc=schemeFineByBranch(b.id), n=metalNet(m,b.id);return `<tr>
       <td><b>${esc(nm(b))}</b></td><td class="r mono">${g(m.owned)}</td><td class="r mono">${g(m.atKarigar)}</td>
       <td class="r mono">${g(m.scrap)}</td><td class="r mono dim">${g(m.consigned)}</td>
       <td class="r mono" style="color:var(--oxblood)">−${g(m.owed)}</td>
+      <td class="r mono" style="color:var(--oxblood)">${sc?"−"+g(sc):"—"}</td>
       <td class="r mono"><b>${n>=0?"":"−"}${g(Math.abs(n))}</b></td>
       <td class="r mono dim">${q0(n*rate24)}</td></tr>`}).join("")}</tbody>
     <tfoot><tr style="border-top:2px solid var(--velvet)">
@@ -1426,6 +1645,7 @@ function viewMetal(){
       <td class="r mono"><b>${g(mt.atKarigar)}</b></td><td class="r mono"><b>${g(mt.scrap)}</b></td>
       <td class="r mono dim">${g(mt.consigned)}</td>
       <td class="r mono" style="color:var(--oxblood)"><b>−${g(mt.owed)}</b></td>
+      <td class="r mono" style="color:var(--oxblood)"><b>−${g(mt.scheme)}</b></td>
       <td class="r mono"><b>${netTot>=0?"+":"−"}${g(Math.abs(netTot))}</b></td>
       <td class="r mono"><b>${q0(netTot*rate24)}</b></td></tr></tfoot>
   </table></div></div>
@@ -1434,7 +1654,124 @@ function viewMetal(){
     <tbody><tr><td class="tiny dim">${esc(L.netPosition)} × Δ${esc(L.rate)}</td>
       ${moves.map(m=>{const d=netTot*rate24*m/100;return `<td class="r mono" style="color:${d>=0?"var(--ok)":"var(--oxblood)"}">${d>=0?"+":"−"}${q0(Math.abs(d))}</td>`}).join("")}
     </tr></tbody></table></div></div>
-  <div class="note">${esc(L.metalExplain)}</div>`;
+  <div class="note">${esc(L.metalExplain)}</div>
+  ${sch.n?`<div class="note ${sch.exposure>0?"red":"green"}"><b>${esc(L.schemeExposure)}</b> ·
+    ${g(sch.fine)} ${esc(L.fineGrams)} ${esc(L.schemeLiability)} ·
+    ${esc(L.valueToday)} ${q0(sch.value)} − ${esc(L.paidSoFar)} ${q0(sch.cash)} =
+    <b>${sch.exposure>=0?"+":"−"}${q0(Math.abs(sch.exposure))}</b></div>`:""}`;
+}
+
+/* ================= savings schemes ================= */
+function viewSchemes(){
+  const L=t(), tot=schemeTotals();
+  const list=ENROLMENTS.filter(e=>!myRole().branchLock||e.branch===S.branch);
+  const protLabel=pr=>({enrol:L.protEnrol, lowest:L.protLowest, none:L.protNone}[pr]);
+  const stLabel=s=>({active:L.statusActive, matured:L.statusMatured, redeemed:L.statusRedeemed}[s]);
+
+  return `<div class="vhead"><h2>${esc(L.v_sch_h)}</h2><p>${esc(L.v_sch_p)}</p></div>
+  ${branchPicker()}
+  <div class="grid4">
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.enrolled)}</div>
+      <div class="val">${q0(tot.n)}</div><div class="sub">${esc(L.statusActive)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.paidSoFar)}</div>
+      <div class="val">${q0(tot.cash)}</div><div class="sub">QAR</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.schemeLiability)}</div>
+      <div class="val neg">${g(tot.fine)}</div><div class="sub">${esc(L.fineGrams)}</div></div></div></div>
+    <div class="panel"><div class="pbody"><div class="metric"><div class="lab">${esc(L.schemeExposure)}</div>
+      <div class="val ${tot.exposure>0?"neg":"pos"}">${tot.exposure>=0?"+":"−"}${q0(Math.abs(tot.exposure))}</div>
+      <div class="sub">QAR · ${esc(L.valueToday)} ${q0(tot.value)}</div></div></div></div>
+  </div>
+  <div class="note ${tot.exposure>0?"red":"green"}">${esc(L.exposureNote)}</div>
+  <div class="panel"><h3>${esc(L.enrolled)}<span class="side">
+    <button class="btn sm ghost" onclick="openEnrol()">${esc(L.newEnrolment)}</button></span></h3>
+  <div class="pbody" style="padding:0;overflow-x:auto"><table>
+    <thead><tr><th>#</th><th>${esc(L.customerCol)}</th><th>${esc(L.plan)}</th><th>${esc(L.branch)}</th>
+      <th class="r">${esc(L.monthsPaid)}</th><th class="r">${esc(L.paidSoFar)}</th>
+      <th class="r">${esc(L.gramsCredited)}</th><th class="r">${esc(L.protectedAt)}</th>
+      <th class="r">${esc(L.valueToday)}</th><th class="r">${esc(L.exposure)}</th>
+      <th>${esc(L.statusCol)}</th><th></th></tr></thead>
+    <tbody>${list.map(e=>{
+      const st=schemeState(e), pl=planOf(e);
+      const eff=effectiveRate(e, st.marketRate);
+      return `<tr>
+      <td class="mono tiny">${esc(e.id)}</td><td>${esc(custName(e.cust))}</td>
+      <td class="tiny">${esc(nm(pl))}<div class="tiny dim">${esc(protLabel(pl.prot))}</div></td>
+      <td class="tiny">${esc(branchName(e.branch))}</td>
+      <td class="r mono">${st.paid} <span class="dim">${esc(L.ofPlan)} ${st.due}</span></td>
+      <td class="r mono">${q0(st.cash)}</td>
+      <td class="r mono"><b>${g(st.totalGrams)}</b>${st.bonusGrams?`<div class="tiny" style="color:var(--ok)">+${g(st.bonusGrams)} ${esc(L.bonus)}</div>`:""}</td>
+      <td class="r mono">${pl.prot==="none"?"—":q(eff)}</td>
+      <td class="r mono">${q0(st.valueToday)}</td>
+      <td class="r mono" style="color:${st.exposure>0?"var(--oxblood)":"var(--ok)"}">${st.exposure>=0?"+":"−"}${q0(Math.abs(st.exposure))}</td>
+      <td>${e.status==="redeemed"?`<span class="pill grey">${esc(stLabel(e.status))}</span>`
+          :st.complete?`<span class="pill gold">${esc(L.statusMatured)}</span>`
+          :`<span class="pill green">${esc(L.statusActive)}</span>`}</td>
+      <td class="r">${e.status==="redeemed"?"":st.complete
+          ?`<button class="btn ghost sm" onclick="redeemScheme('${e.id}')">${esc(L.redeem)}</button>`
+          :`<button class="btn ghost sm" onclick="payInstalment('${e.id}')">${esc(L.payInstalment)}</button>`}</td>
+    </tr>`}).join("")}</tbody></table></div></div>
+  <div class="panel"><h3>${esc(L.plan)}</h3><div class="pbody" style="padding:0"><table>
+    <thead><tr><th>${esc(L.plan)}</th><th class="r">${esc(L.months)}</th><th class="r">${esc(L.bonus)}</th>
+      <th>${esc(L.karat)}</th><th>${esc(L.rateProtection)}</th><th class="r">${esc(L.makingOff)}</th></tr></thead>
+    <tbody>${PLANS.map(pl=>`<tr><td><b>${esc(nm(pl))}</b></td><td class="r mono">${pl.months}</td>
+      <td class="r mono">${pl.bonusMonths?"+"+pl.bonusMonths:"—"}</td><td class="mono">${esc(kLabel(pl.k))}</td>
+      <td class="tiny">${esc(protLabel(pl.prot))}</td>
+      <td class="r mono">${pl.makingOff?pl.makingOff+"%":"—"}</td></tr>`).join("")}</tbody>
+  </table></div></div>`;
+}
+function payInstalment(id){
+  const e=ENROLMENTS.find(x=>x.id===id); if(!e) return;
+  const pl=planOf(e), market=S.rates[pl.k].sell, eff=effectiveRate(e, market);
+  e.payments.push({date:TODAY, amount:e.monthly, rate:eff});
+  if (pl.prot==="lowest" && market < (e.protRate||market)) e.protRate=market;
+  log("scheme", id+" · "+q(e.monthly)+" @ "+q(eff));
+  renderAll(); toast(t().paymentAdded+" · "+g(e.monthly/eff)+" "+gUnit());
+}
+function redeemScheme(id){
+  const L=t(), e=ENROLMENTS.find(x=>x.id===id); if(!e) return;
+  const st=schemeState(e), pl=planOf(e);
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.redeem)} — ${esc(e.id)}</h3><div class="mb">
+    <p class="tiny dim" style="margin-top:0">${esc(L.redeemBody)}</p>
+    <div class="formula">
+      <div>${esc(L.gramsCredited)} <b style="float:inline-end">${g(st.grams)}</b></div>
+      ${st.bonusGrams?`<div style="color:var(--ok)">${esc(L.bonusGrams)} <b style="float:inline-end">${g(st.bonusGrams)}</b></div>`:""}
+      <div>${esc(L.paidSoFar)} <b style="float:inline-end">${q(st.cash)}</b></div>
+      <div>${esc(L.valueToday)} <b style="float:inline-end">${q(st.valueToday)}</b></div>
+      <div style="border-top:2px solid var(--velvet);margin-top:5px;padding-top:5px;color:${st.exposure>0?"var(--oxblood)":"var(--ok)"}">
+        ${esc(L.exposure)} <b style="float:inline-end">${st.exposure>=0?"+":"−"}${q(Math.abs(st.exposure))}</b></div>
+      ${pl.makingOff?`<div class="dim">${esc(L.makingOff)} ${pl.makingOff}%</div>`:""}
+    </div></div>
+    <div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="confirmRedeem('${id}')">${esc(L.redeem)}</button></div></div></div>`;
+}
+function confirmRedeem(id){
+  const e=ENROLMENTS.find(x=>x.id===id), st=schemeState(e);
+  e.status="redeemed";
+  METAL[e.branch].owned-=st.fineGrams;
+  log("scheme", id+" redeemed · "+g(st.totalGrams)+" g");
+  closeModal(); renderAll(); toast(t().redeemed+" · "+g(st.totalGrams)+" "+gUnit());
+}
+function openEnrol(){
+  const L=t();
+  document.getElementById("modalHost").innerHTML=`<div class="modal"><div class="box">
+    <h3>${esc(L.newEnrolment)}</h3><div class="mb">
+    <label class="f"><span>${esc(L.customer)}</span><select id="enC">
+      ${CUSTOMERS.map(c=>`<option value="${c.id}">${esc(nm(c))}</option>`).join("")}</select></label>
+    <label class="f"><span>${esc(L.plan)}</span><select id="enP">
+      ${PLANS.map(pl=>`<option value="${pl.id}">${esc(nm(pl))} · ${pl.months} ${esc(L.months)}</option>`).join("")}</select></label>
+    <label class="f"><span>${esc(L.instalment)} (QAR)</span><input id="enM" class="num" type="number" step="100" value="1500"></label>
+    </div><div class="mf"><button class="btn ghost" onclick="closeModal()">${esc(L.cancel)}</button>
+    <button class="btn gold" onclick="createEnrol()">${esc(L.newEnrolment)}</button></div></div></div>`;
+}
+function createEnrol(){
+  const pid=document.getElementById("enP").value, pl=PLANS.find(x=>x.id===pid);
+  const id="GS-"+String(132+ENROLMENTS.length);
+  ENROLMENTS.unshift({id, cust:document.getElementById("enC").value, branch:S.branch, plan:pid,
+    start:TODAY, monthly:parseFloat(document.getElementById("enM").value)||0,
+    status:"active", protRate:S.rates[pl.k].sell, payments:[]});
+  log("scheme", id+" enrolled · "+nm(pl));
+  closeModal(); renderAll(); toast(t().enrolAdded);
 }
 
 /* ================= day close ================= */
@@ -1556,6 +1893,7 @@ function renderView(){
       S.view==="counter"    ? viewCounter()
     : S.view==="register"   ? viewRegister()
     : S.view==="stock"      ? viewStock()
+    : S.view==="schemes"    ? viewSchemes()
     : S.view==="workshop"   ? viewWorkshop()
     : S.view==="purchases"  ? viewPurchases()
     : S.view==="metal"      ? viewMetal()
@@ -1594,7 +1932,7 @@ function renderAll(flash){
 (function(){
   const p=new URLSearchParams(location.search);
   if(p.get("lang")==="ar") S.lang="ar";
-  const views=["board","counter","register","stock","workshop","purchases","metal","dayclose","compliance"];
+  const views=["board","counter","register","stock","schemes","workshop","purchases","metal","dayclose","compliance"];
   if(views.includes(p.get("view"))) S.view=p.get("view");
   if(BRANCHES.some(b=>b.id===p.get("branch"))) S.branch=p.get("branch");
   if(USERS.some(u=>u.id===p.get("as"))) signIn(p.get("as"));
